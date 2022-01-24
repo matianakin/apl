@@ -1,1 +1,2 @@
 C:\Users\matia\source\repos\Project10\x64\Debug\Project10.exe
+D:\GitHub\apl\projekt\x64\Debug\Project.exe
