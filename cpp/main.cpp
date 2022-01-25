@@ -7,6 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <chrono>
 #include <cstring>
 
 
@@ -14,6 +15,7 @@ ListOfCities* headCity=nullptr;
 ListOfConnections* headConnection = nullptr;
 ThreadHead* tHead = nullptr;
 std::mutex m;
+std::vector<ListOfCities*> myList;
 
 void checkForDuplicateCities(ListOfCities* head)
 {
@@ -421,7 +423,7 @@ void unThread() {
     }
 }
 
-void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* neighbor, std::string citySearch, std::vector<ListOfCities*> &myList)
+void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* neighbor, std::string citySearch)
 {
     auto analyzedCity = th->subHead;
     bool broken = false;
@@ -493,10 +495,10 @@ void parallelVersion(std::string start, int nth)
                 std::vector<std::thread*> ThreadVector;
                 auto tempT = tHead;
                 std::string cit = connectionIterator->city2;
-                std::vector<ListOfCities*> myList;
+
                 while(tempT)
                 {
-                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit, myList);
+                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit);
                     ThreadVector.push_back(myThread);
                     tempT=tempT->next;
                 }
@@ -515,6 +517,7 @@ void parallelVersion(std::string start, int nth)
                         neighbor = analyzedCity;
                     }
                 }
+                myList.clear();
 
             } else if (connectionIterator->city2 == current->city) {
 
@@ -522,10 +525,9 @@ void parallelVersion(std::string start, int nth)
                 std::vector<std::thread*> ThreadVector;
                 auto tempT = tHead;
                 std::string cit = connectionIterator->city1;
-                std::vector<ListOfCities*> myList;
                 while(tempT)
                 {
-                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit, myList);
+                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit);
                     ThreadVector.push_back(myThread);
                     tempT=tempT->next;
                 }
@@ -544,6 +546,7 @@ void parallelVersion(std::string start, int nth)
                         neighbor = analyzedCity;
                     }
                 }
+                myList.clear();
 
             }
             connectionIterator = connectionIterator->next;
@@ -586,7 +589,7 @@ void parallelVersion(std::string start, int nth)
                 auto tempCity = tempT->subHead;
                 while(tempCity) {
                     if (!tempCity->visited) {
-                        //finished = false;
+                        finished = false;
                         break;
                     }
                     tempCity=tempCity->next;
@@ -640,12 +643,16 @@ void alphabet()
 }
 
 int main() {
+    std::chrono::steady_clock sc;   // create an object of `steady_clock` class
+
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
-    //linearVersion("Wroclaw");
-    /*prepareParallelization(5);
-    unThread();*/
-    parallelVersion("Krakow", 2);
+    auto start = sc.now();
+    //linearVersion("Krakow");
+    parallelVersion("Krakow", 8);
+    auto end = sc.now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
+    auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
+    std::cout<<"Operation took: "<<time_span.count()<<" seconds !!!\n";
     readListOfCities();
     return 0;
 }
