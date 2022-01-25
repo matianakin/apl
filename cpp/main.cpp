@@ -1,12 +1,15 @@
 #include <iostream>
 #include "ListOfCities.h"
 #include "ListOfConnections.h"
+#include "ThreadHead.h"
 #include <fstream>
 #include <thread>
 using namespace std;
 
 ListOfCities* headCity=nullptr;
 ListOfConnections* headConnection = nullptr;
+ThreadHead* tHead = nullptr;
+
 
 void checkForDuplicateCities(ListOfCities* head)
 {
@@ -304,6 +307,77 @@ void linearVersion(std::string start)
     }while(!finished);
 }
 
+ThreadHead* prepareParallelization(int threadCount)
+{
+    auto tempCity = headCity;
+    int i =0;
+    while(tempCity)
+    {
+        i++;
+        tempCity = tempCity->next;
+    }
+    tempCity = headCity;
+    if(threadCount>i)
+    {
+        cout<<"Too many threads requested. Number of threads cannot exceed number of vertices."<<endl;
+        exit(1);
+    }
+    int vertPerThread =i/threadCount;
+    int q=0;
+    bool created = false;
+    auto tempCityHead = headCity;
+    auto tempCityTail = headCity;
+    while(tempCity)
+    {
+        if(q==vertPerThread)
+        {
+            tempCityTail = tempCity;
+            if(!created)
+            {
+                created = true;
+                tHead= new ThreadHead(tempCityHead, tempCityTail);
+                if(tempCity->next)
+                {
+                    tempCityHead=tempCity->next;
+                }
+            }
+            else
+            {
+                auto tempThreader = new ThreadHead(tHead, tempCityHead, tempCityTail);
+                tHead=tempThreader;
+                if(tempCity->next)
+                {
+                    tempCityHead=tempCity->next;
+                }
+            }
+            q=-1;
+        }
+        q++;
+        tempCity = tempCity->next;
+    }
+    if(vertPerThread*threadCount!=i)
+    {
+        tempCityTail = tempCity;
+        auto tempThreader = new ThreadHead(tHead, tempCityHead, tempCityTail);
+        tHead=tempThreader;
+    }
+    return tHead;
+}
+
+void unThread()
+{
+    auto tempThreader = tHead;
+    while(tempThreader)
+    {
+        if(tempThreader->prev)
+        {
+            if(tempThreader->prev->subEnd)
+            tempThreader->prev->subEnd->next=tempThreader->subHead;
+        }
+        tempThreader=tempThreader->next;
+    }
+}
+
 void alphabet()
 {
     auto tempCity = headCity;
@@ -344,7 +418,9 @@ void alphabet()
 int main() {
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
-    linearVersion("a");
+    //linearVersion("a");
+    prepareParallelization(5);
+    unThread();
     readListOfCities();
     return 0;
 }

@@ -3,4 +3,4 @@ project(cpp)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(cpp main.cpp ListOfCities.cpp ListOfCities.h ListOfConnections.cpp ListOfConnections.h)
+add_executable(cpp main.cpp ListOfCities.cpp ListOfCities.h ListOfConnections.cpp ListOfConnections.h ThreadHead.cpp ThreadHead.h)
