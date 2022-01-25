@@ -315,7 +315,7 @@ void alphabet()
         tempCity2=tempCity2->next;
     }
     for(int j=0; j<i; j++) {
-        while (tempCity->next &&tempCity) {
+        while (tempCity&&tempCity->next){
             if (tempCity->city > tempCity->next->city) {
                 auto tempCityNext = tempCity->next;
                 auto tempCityNextNext = tempCityNext->next;
@@ -332,10 +332,6 @@ void alphabet()
                 }
             }
             tempCity = tempCity->next;
-            if(!tempCity)
-            {
-                break;
-            }
         }
         while(headCity->prev)
         {
