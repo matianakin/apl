@@ -4,6 +4,8 @@
 #include "ThreadHead.h"
 #include <fstream>
 #include <thread>
+#include <vector>
+
 using namespace std;
 
 ListOfCities* headCity=nullptr;
@@ -193,6 +195,34 @@ void changeDistance(ListOfCities* city, int newDistance)
     }
 }
 
+void changeDistanceThread(ListOfCities* city, int newDistance)
+{
+    city->distance = newDistance;
+    auto tempT = tHead;
+    while(tempT)
+    {
+        auto tempCity = tempT->subHead;
+        while(tempCity) {
+        if(tempCity->prevCity==city->city)
+        {
+            auto tempCon = headConnection;
+            while(tempCon)
+            {
+                if((tempCon->city1==city->city && tempCon->city2==tempCity->city)||(tempCon->city2==city->city && tempCon->city1==tempCity->city))
+                {
+                    break;
+                }
+                tempCon = tempCon->next;
+            }
+            int newSubDistance=city->distance+tempCon->distance;
+            changeDistance(tempCity, newSubDistance);
+        }
+            tempCity=tempCity->next;
+        }
+        tempT = tempT->next;
+    }
+}
+
 void linearVersion(std::string start)
 {
 
@@ -217,8 +247,11 @@ void linearVersion(std::string start)
         exit(1);
     }
 
+    auto neighbor = headCity;
     auto current = startCity;
-    auto neighbor = startCity->next;
+    if(startCity->next) {
+        neighbor = startCity->next;
+    }
 
     do {
         finished=true;
@@ -386,6 +419,157 @@ void unThread() {
     }
 }
 
+void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* neighbor, string citySearch)
+{
+    auto analyzedCity = th->subHead;
+    bool broken = false;
+    while (analyzedCity) {
+        if (analyzedCity->city == citySearch) {
+            broken = true;
+            break;
+        }
+        analyzedCity = analyzedCity->next;
+    }
+    if(broken) {
+        if (!analyzedCity->visited) {
+            if (analyzedCity->distance > road) {
+                analyzedCity->prevCity = current->city;
+                changeDistanceThread(analyzedCity, road);
+            }
+            if (analyzedCity->distance < neighbor->distance) {
+                neighbor = analyzedCity;
+            }
+        }
+    }
+    
+}
+
+void parallelVersion(std::string start)
+{
+    auto startCity = headCity;
+    bool found = false;
+    bool finished = false;
+    while(startCity)
+    {
+        if(startCity->city==start)
+        {
+            found=true;
+            startCity->distance =0;
+            startCity->visited=true;
+            startCity->prevCity = "This is the starting vector";
+            break;
+        }
+        startCity=startCity->next;
+    }
+    if(!found)
+    {
+        cout<<"Incorrect city provided as a start point"<<endl;
+        exit(1);
+    }
+
+    auto neighbor = headCity;
+    auto current = startCity;
+    if(startCity->next) {
+        neighbor = startCity->next;
+    }
+
+    int noOfThreads =2;
+
+    prepareParallelization(noOfThreads);
+
+    do {
+        finished=true;
+        auto connectionIterator = headConnection;
+        while (connectionIterator) {
+            if (connectionIterator->city1 == current->city) {
+
+                int road = current->distance + connectionIterator->distance;
+                vector<>
+            } else if (connectionIterator->city2 == current->city) {
+                auto analyzedCity = headCity;
+                int road = current->distance + connectionIterator->distance;
+                while (analyzedCity) {
+                    if (analyzedCity->city == connectionIterator->city1) {
+                        break;
+                    }
+                    analyzedCity = analyzedCity->next;
+                }
+                if (!analyzedCity->visited) {
+                    if (analyzedCity->distance > road) {
+                        analyzedCity->prevCity = current->city;
+                        changeDistance(analyzedCity, road);
+                    }
+                    if (analyzedCity->distance < neighbor->distance) {
+                        neighbor = analyzedCity;
+                    }
+                }
+            }
+            connectionIterator = connectionIterator->next;
+        }
+
+
+
+
+
+
+
+
+        if(neighbor!=current)
+        {
+            current=neighbor;
+            current->visited=true;
+        }
+        else
+        {
+            int tempDist=INT32_MAX;
+            auto tempT = tHead;
+            bool extra=false;
+            while(tempT)
+            {
+                auto tempCity = tempT->subHead;
+
+                while(tempCity) {
+                    if (!tempCity->visited) {
+                        if (tempCity->distance < tempDist) {
+                            current = tempCity;
+                            extra = true;
+                            tempDist = tempCity->distance;
+                        }
+                    }
+                    tempCity=tempCity->next;
+                }
+                tempT = tempT->next;
+            }
+            if(extra) {
+                current->visited = true;
+                finished = false;
+            }
+        }
+
+        if(finished) {
+            auto tempT = tHead;
+            while(tempT)
+            {
+                auto tempCity = tempT->subHead;
+                while(tempCity) {
+                    if (!tempCity->visited) {
+                        finished = false;
+                        break;
+                    }
+                    tempCity=tempCity->next;
+                }
+                tempT = tempT->next;
+                if(!finished)
+                {
+                    break;
+                }
+            }
+        }
+    }while(!finished);
+
+    unThread();
+}
+
 void alphabet()
 {
     auto tempCity = headCity;
@@ -426,7 +610,7 @@ void alphabet()
 int main() {
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
-    linearVersion("Bydgoszcz");
+    linearVersion("Wroclaw");
     prepareParallelization(5);
     unThread();
     readListOfCities();
