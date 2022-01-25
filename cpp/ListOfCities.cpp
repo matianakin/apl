@@ -9,6 +9,8 @@ ListOfCities::ListOfCities()
 {
     next = nullptr;
     prev = nullptr;
+    visited = false;
+    prevCity="";
 }
 
 ListOfCities::ListOfCities(std::string name, int distance)
@@ -17,6 +19,8 @@ ListOfCities::ListOfCities(std::string name, int distance)
     prev = nullptr;
     this->city=std::move(name);
     this->distance=distance;
+    visited = false;
+    prevCity="";
 }
 
 ListOfCities::ListOfCities(std::string name, int distance, ListOfCities* current)
@@ -26,6 +30,8 @@ ListOfCities::ListOfCities(std::string name, int distance, ListOfCities* current
     current->next= this;
     this->city=std::move(name);
     this->distance=distance;
+    visited = false;
+    prevCity="";
 }
 
 ListOfCities::ListOfCities(std::string city)
@@ -33,7 +39,9 @@ ListOfCities::ListOfCities(std::string city)
     next = nullptr;
     prev = nullptr;
     this->city=std::move(city);
-    this->distance=0;
+    this->distance=INT32_MAX;
+    visited = false;
+    prevCity="";
 }
 
 ListOfCities::ListOfCities(std::string city, ListOfCities* current)
@@ -42,5 +50,7 @@ ListOfCities::ListOfCities(std::string city, ListOfCities* current)
     prev = current;
     current->next= this;
     this->city=std::move(city);
-    this->distance=0;
+    this->distance=INT32_MAX;
+    visited = false;
+    prevCity="";
 }
