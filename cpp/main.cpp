@@ -13,7 +13,7 @@
 ListOfCities* headCity=nullptr;
 ListOfConnections* headConnection = nullptr;
 ThreadHead* tHead = nullptr;
-
+std::mutex m;
 
 void checkForDuplicateCities(ListOfCities* head)
 {
@@ -364,7 +364,7 @@ void prepareParallelization(int threadCount)
     auto tempCityTail = headCity;
     while(tempCity)
     {
-        if(q==vertPerThread)
+        if(q==vertPerThread-1)
         {
             tempCityTail = tempCity;
             if(!created)
@@ -421,7 +421,7 @@ void unThread() {
     }
 }
 
-void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* neighbor, std::string citySearch)
+void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* neighbor, std::string citySearch, std::vector<ListOfCities*> &myList)
 {
     auto analyzedCity = th->subHead;
     bool broken = false;
@@ -434,6 +434,10 @@ void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* ne
     }
     if(broken) {
         if (!analyzedCity->visited) {
+            m.lock();
+            myList.push_back(analyzedCity);
+            m.unlock();
+            /*
             if (analyzedCity->distance > road) {
                 analyzedCity->prevCity = current->city;
                 changeDistanceThread(analyzedCity, road);
@@ -441,6 +445,7 @@ void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* ne
             if (analyzedCity->distance < neighbor->distance) {
                 neighbor = analyzedCity;
             }
+            ;*/
         }
     }
 }
@@ -488,15 +493,27 @@ void parallelVersion(std::string start, int nth)
                 std::vector<std::thread*> ThreadVector;
                 auto tempT = tHead;
                 std::string cit = connectionIterator->city2;
+                std::vector<ListOfCities*> myList;
                 while(tempT)
                 {
-                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit);
+                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit, myList);
                     ThreadVector.push_back(myThread);
                     tempT=tempT->next;
                 }
                 for(auto & i : ThreadVector)
                 {
                     i->join();
+                }
+
+                for(auto & analyzedCity : myList)
+                {
+                    if (analyzedCity->distance > road) {
+                        analyzedCity->prevCity = current->city;
+                        changeDistanceThread(analyzedCity, road);
+                    }
+                    if (analyzedCity->distance < neighbor->distance) {
+                        neighbor = analyzedCity;
+                    }
                 }
 
             } else if (connectionIterator->city2 == current->city) {
@@ -505,15 +522,27 @@ void parallelVersion(std::string start, int nth)
                 std::vector<std::thread*> ThreadVector;
                 auto tempT = tHead;
                 std::string cit = connectionIterator->city1;
+                std::vector<ListOfCities*> myList;
                 while(tempT)
                 {
-                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit);
+                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit, myList);
                     ThreadVector.push_back(myThread);
                     tempT=tempT->next;
                 }
                 for(auto & i : ThreadVector)
                 {
                     i->join();
+                }
+
+                for(auto & analyzedCity : myList)
+                {
+                    if (analyzedCity->distance > road) {
+                        analyzedCity->prevCity = current->city;
+                        changeDistanceThread(analyzedCity, road);
+                    }
+                    if (analyzedCity->distance < neighbor->distance) {
+                        neighbor = analyzedCity;
+                    }
                 }
 
             }
@@ -523,7 +552,6 @@ void parallelVersion(std::string start, int nth)
         {
             current=neighbor;
             current->visited=true;
-            std::cout<<"I am here my bruda ";
         }
         else
         {
@@ -558,7 +586,7 @@ void parallelVersion(std::string start, int nth)
                 auto tempCity = tempT->subHead;
                 while(tempCity) {
                     if (!tempCity->visited) {
-                        finished = false;
+                        //finished = false;
                         break;
                     }
                     tempCity=tempCity->next;
