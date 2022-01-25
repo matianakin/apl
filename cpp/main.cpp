@@ -307,7 +307,7 @@ void linearVersion(std::string start)
     }while(!finished);
 }
 
-ThreadHead* prepareParallelization(int threadCount)
+void prepareParallelization(int threadCount)
 {
     auto tempCity = headCity;
     int i =0;
@@ -361,20 +361,28 @@ ThreadHead* prepareParallelization(int threadCount)
         auto tempThreader = new ThreadHead(tHead, tempCityHead, tempCityTail);
         tHead=tempThreader;
     }
-    return tHead;
+    auto threadIndex = tHead;
+    while (threadIndex)
+    {
+        if(threadIndex->subEnd)
+        threadIndex->subEnd->next=nullptr;
+        threadIndex = threadIndex->next;
+    }
 }
 
-void unThread()
-{
-    auto tempThreader = tHead;
-    while(tempThreader)
+void unThread() {
+    auto tempCityTail = tHead->subHead;
+    while (tempCityTail->next)
     {
-        if(tempThreader->prev)
+        tempCityTail=tempCityTail->next;
+    }
+    while(tempCityTail)
+    {
+        if(tempCityTail->prev)
         {
-            if(tempThreader->prev->subEnd)
-            tempThreader->prev->subEnd->next=tempThreader->subHead;
+            tempCityTail->prev->next=tempCityTail;
         }
-        tempThreader=tempThreader->next;
+        tempCityTail=tempCityTail->prev;
     }
 }
 
@@ -418,7 +426,7 @@ void alphabet()
 int main() {
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
-    //linearVersion("a");
+    linearVersion("Bydgoszcz");
     prepareParallelization(5);
     unThread();
     readListOfCities();

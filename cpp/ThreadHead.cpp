@@ -19,9 +19,6 @@ ThreadHead::ThreadHead(ListOfCities *subHead, ListOfCities *subEnd)
     this->prev=nullptr;
     this->subHead=subHead;
     this->subEnd=subEnd;
-    if(subEnd) {
-        this->subEnd->next = nullptr;
-    }
 }
 
 ThreadHead::ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities *subEnd)
@@ -31,16 +28,10 @@ ThreadHead::ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities 
     this->subHead=subHead;
     this->subEnd=subEnd;
     curHead->prev=this;
-    if(subEnd) {
-        this->subEnd->next = nullptr;
-    }
 }
 
 void ThreadHead::overrider(ListOfCities *subHead, ListOfCities *subEnd)
 {
     this->subHead=subHead;
     this->subEnd=subEnd;
-    if(subEnd) {
-        this->subEnd->next = nullptr;
-    }
 }
