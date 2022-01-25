@@ -166,6 +166,30 @@ void readListofConnections()
     }
 }
 
+void changeDistance(ListOfCities* city, int newDistance)
+{
+    city->distance = newDistance;
+    auto tempCity = headCity;
+    while (tempCity)
+    {
+        if(tempCity->prevCity==city->city)
+        {
+            auto tempCon = headConnection;
+            while(tempCon)
+            {
+                if((tempCon->city1==city->city && tempCon->city2==tempCity->city)||(tempCon->city2==city->city && tempCon->city1==tempCity->city))
+                {
+                    break;
+                }
+                tempCon = tempCon->next;
+            }
+            int newSubDistance=city->distance+tempCon->distance;
+            changeDistance(tempCity, newSubDistance);
+        }
+        tempCity = tempCity->next;
+    }
+}
+
 void linearVersion(std::string start)
 {
 
@@ -209,7 +233,7 @@ void linearVersion(std::string start)
                 if(!analyzedCity->visited) {
                     if (analyzedCity->distance > road) {
                         analyzedCity->prevCity = current->city;
-                        analyzedCity->distance = road;
+                        changeDistance(analyzedCity, road);
                     }
                     if (analyzedCity->distance < neighbor->distance) {
                         neighbor = analyzedCity;
@@ -229,7 +253,7 @@ void linearVersion(std::string start)
                 if(!analyzedCity->visited) {
                     if (analyzedCity->distance > road) {
                         analyzedCity->prevCity = current->city;
-                        analyzedCity->distance = road;
+                        changeDistance(analyzedCity, road);
                     }
                     if (analyzedCity->distance < neighbor->distance) {
                         neighbor = analyzedCity;
@@ -291,7 +315,7 @@ void alphabet()
         tempCity2=tempCity2->next;
     }
     for(int j=0; j<i; j++) {
-        while (tempCity->next) {
+        while (tempCity->next &&tempCity) {
             if (tempCity->city > tempCity->next->city) {
                 auto tempCityNext = tempCity->next;
                 auto tempCityNextNext = tempCityNext->next;
@@ -308,6 +332,10 @@ void alphabet()
                 }
             }
             tempCity = tempCity->next;
+            if(!tempCity)
+            {
+                break;
+            }
         }
         while(headCity->prev)
         {
@@ -320,7 +348,7 @@ void alphabet()
 int main() {
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
-    linearVersion("Krakow");
+    linearVersion("a");
     readListOfCities();
     return 0;
 }
