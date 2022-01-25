@@ -3,10 +3,12 @@
 #include "ListOfConnections.h"
 #include "ThreadHead.h"
 #include <fstream>
-#include <thread>
 #include <vector>
+#include <thread>
+#include <mutex>
+#include <atomic>
+#include <cstring>
 
-using namespace std;
 
 ListOfCities* headCity=nullptr;
 ListOfConnections* headConnection = nullptr;
@@ -83,12 +85,12 @@ void checkForDuplicateConnections(ListOfConnections* head)
 
 void importFromFile(std::string filename)
 {
-    fstream file (filename);
+    std::fstream file (filename);
     if(file.is_open())
     {
-        string temp;
-        string tempcity1;
-        string tempcity2;
+        std::string temp="";
+        std::string tempcity1;
+        std::string tempcity2;
         int tempdistance;
         int j=0;
         int i=0;
@@ -107,7 +109,7 @@ void importFromFile(std::string filename)
                 }
                 case 2:
                 {
-                    tempdistance=std::stoi(temp);
+                    tempdistance=atoi( temp.c_str() );
                     break;
                 }
             }
@@ -156,7 +158,7 @@ void readListOfCities()
     auto tempCity = headCity;
     while (tempCity)
     {
-        cout << "city: " + tempCity->city << " Distance from source: " << tempCity->distance << " Previous city: " << tempCity->prevCity<< endl;
+        std::cout << "city: " + tempCity->city << " Distance from source: " << tempCity->distance << " Previous city: " << tempCity->prevCity<< std::endl;
         tempCity = tempCity->next;
     }
 }
@@ -166,7 +168,7 @@ void readListofConnections()
     auto tempConnection = headConnection;
     while (tempConnection)
     {
-        cout << "city1: " + tempConnection->city1 << "city1: " + tempConnection->city1 << " Distance  " << tempConnection->distance << endl;
+        std::cout << "city1: " + tempConnection->city1 << "city1: " + tempConnection->city1 << " Distance  " << tempConnection->distance << std::endl;
         tempConnection = tempConnection->next;
     }
 }
@@ -243,7 +245,7 @@ void linearVersion(std::string start)
     }
     if(!found)
     {
-        cout<<"Incorrect city provided as a start point"<<endl;
+        std::cout<<"Incorrect city provided as a start point"<<std::endl;
         exit(1);
     }
 
@@ -352,7 +354,7 @@ void prepareParallelization(int threadCount)
     tempCity = headCity;
     if(threadCount>i)
     {
-        cout<<"Too many threads requested. Number of threads cannot exceed number of vertices."<<endl;
+        std::cout<<"Too many threads requested. Number of threads cannot exceed number of vertices."<<std::endl;
         exit(1);
     }
     int vertPerThread =i/threadCount;
@@ -419,7 +421,7 @@ void unThread() {
     }
 }
 
-void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* neighbor, string citySearch)
+void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* neighbor, std::string citySearch)
 {
     auto analyzedCity = th->subHead;
     bool broken = false;
@@ -441,10 +443,9 @@ void oneThread(int road, ThreadHead* th, ListOfCities* current, ListOfCities* ne
             }
         }
     }
-    
 }
 
-void parallelVersion(std::string start)
+void parallelVersion(std::string start, int nth)
 {
     auto startCity = headCity;
     bool found = false;
@@ -463,7 +464,7 @@ void parallelVersion(std::string start)
     }
     if(!found)
     {
-        cout<<"Incorrect city provided as a start point"<<endl;
+        std::cout<<"Incorrect city provided as a start point"<<std::endl;
         exit(1);
     }
 
@@ -473,7 +474,7 @@ void parallelVersion(std::string start)
         neighbor = startCity->next;
     }
 
-    int noOfThreads =2;
+    int noOfThreads =nth;
 
     prepareParallelization(noOfThreads);
 
@@ -484,40 +485,45 @@ void parallelVersion(std::string start)
             if (connectionIterator->city1 == current->city) {
 
                 int road = current->distance + connectionIterator->distance;
-                vector<>
+                std::vector<std::thread*> ThreadVector;
+                auto tempT = tHead;
+                std::string cit = connectionIterator->city2;
+                while(tempT)
+                {
+                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit);
+                    ThreadVector.push_back(myThread);
+                    tempT=tempT->next;
+                }
+                for(auto & i : ThreadVector)
+                {
+                    i->join();
+                }
+
             } else if (connectionIterator->city2 == current->city) {
-                auto analyzedCity = headCity;
+
                 int road = current->distance + connectionIterator->distance;
-                while (analyzedCity) {
-                    if (analyzedCity->city == connectionIterator->city1) {
-                        break;
-                    }
-                    analyzedCity = analyzedCity->next;
+                std::vector<std::thread*> ThreadVector;
+                auto tempT = tHead;
+                std::string cit = connectionIterator->city1;
+                while(tempT)
+                {
+                    auto* myThread = new std::thread(oneThread, road, tempT, current, neighbor, cit);
+                    ThreadVector.push_back(myThread);
+                    tempT=tempT->next;
                 }
-                if (!analyzedCity->visited) {
-                    if (analyzedCity->distance > road) {
-                        analyzedCity->prevCity = current->city;
-                        changeDistance(analyzedCity, road);
-                    }
-                    if (analyzedCity->distance < neighbor->distance) {
-                        neighbor = analyzedCity;
-                    }
+                for(auto & i : ThreadVector)
+                {
+                    i->join();
                 }
+
             }
             connectionIterator = connectionIterator->next;
         }
-
-
-
-
-
-
-
-
         if(neighbor!=current)
         {
             current=neighbor;
             current->visited=true;
+            std::cout<<"I am here my bruda ";
         }
         else
         {
@@ -545,7 +551,6 @@ void parallelVersion(std::string start)
                 finished = false;
             }
         }
-
         if(finished) {
             auto tempT = tHead;
             while(tempT)
@@ -566,7 +571,6 @@ void parallelVersion(std::string start)
             }
         }
     }while(!finished);
-
     unThread();
 }
 
@@ -610,9 +614,10 @@ void alphabet()
 int main() {
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
-    linearVersion("Wroclaw");
-    prepareParallelization(5);
-    unThread();
+    //linearVersion("Wroclaw");
+    /*prepareParallelization(5);
+    unThread();*/
+    parallelVersion("Krakow", 2);
     readListOfCities();
     return 0;
 }
