@@ -334,11 +334,11 @@ uniqueList:
         sub     rsp, 32                                 
         mov     rax, qword [rel headVertex]             
         mov     qword [rbp-8H], rax                     
-        jmp     Lable033                                 
+        jmp     Tester                                 
 
 AssignVertex:  mov     rax, qword [rbp-8H]                   
         mov     qword [rbp-10H], rax                    
-        jmp     Lable032                                
+        jmp     TidyUp                                
 
 FreeMemory:  mov     rax, qword [rbp-10H]                 
         mov     rax, qword [rax+70H]                    
@@ -359,27 +359,27 @@ FreeMemory:  mov     rax, qword [rbp-10H]
         mov     qword [rax+70H], rdx                    
         mov     rax, qword [rbp-18H]                    
         mov     rdi, rax                                
-        call    free                                    
+        call    free                                   
         mov     qword [rbp-18H], 0                      
-        jmp     Lable032                                
+        jmp     TidyUp                                
 
 Lable031:  mov     rax, qword [rbp-10H]                 
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-10H], rax                    
-Lable032:  mov     rax, qword [rbp-10H]                 
+TidyUp:  mov     rax, qword [rbp-10H]                 
         mov     rax, qword [rax+70H]                    
         test    rax, rax                                
         jnz     FreeMemory                                
         mov     rax, qword [rbp-8H]                     
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-8H], rax                     
-Lable033:  cmp     qword [rbp-8H], 0                    
-        jz      Lable034                                
+Tester:  cmp     qword [rbp-8H], 0                    
+        jz      ReturnUnique                                
         mov     rax, qword [rbp-8H]                     
         mov     rax, qword [rax+70H]                    
         test    rax, rax                                
         jne     AssignVertex                                
-Lable034:  nop                                          
+ReturnUnique:  nop                                          
         leave                                           
         ret                                             
 ; uniqueList End of
@@ -390,9 +390,9 @@ extractCities:;  begin
         sub     rsp, 16                                 
         mov     rax, qword [rel headConnection]         
         mov     qword [rbp-8H], rax                     
-        jmp     Lable036                                
+        jmp     TestEqualCities                                
 
-Lable035:  mov     rax, qword [rbp-8H]                  
+VADD:  mov     rax, qword [rbp-8H]                  
         mov     rdi, rax                                
         call    addVertex                               
         mov     rax, qword [rbp-8H]                     
@@ -402,8 +402,8 @@ Lable035:  mov     rax, qword [rbp-8H]
         mov     rax, qword [rbp-8H]                     
         mov     rax, qword [rax+68H]                    
         mov     qword [rbp-8H], rax                     
-Lable036:  cmp     qword [rbp-8H], 0                    
-        jnz     Lable035                                
+TestEqualCities:  cmp     qword [rbp-8H], 0                    
+        jnz     VADD                                
         nop                                             
         nop                                             
         leave                                           
