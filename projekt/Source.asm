@@ -27,7 +27,7 @@ extern _CRT_INIT
 
 SECTION .text                       
 
-addVertex:; begin
+addVertex:
         push    rbp                                     
         mov     rbp, rsp                                
         sub     rsp, 32                                 
@@ -50,24 +50,24 @@ addVertex:; begin
         mov     byte [rax+68H], 0                       
         mov     rax, qword [rel headVertex]             
         test    rax, rax                                
-        jnz     Lable001                                
+        jnz     AddNextVertex                              
         mov     rax, qword [rbp-8H]                     
         mov     qword [rel headVertex], rax             
         mov     rax, qword [rel headVertex]             
         mov     qword [rax+70H], 0                      
-        jmp     Lable002                                
+        jmp     AddFirstVertex                                
 
-Lable001:  mov     rdx, qword [rel headVertex]             
+AddNextVertex:  mov     rdx, qword [rel headVertex]             
         mov     rax, qword [rbp-8H]                     
         mov     qword [rax+70H], rdx                    
         mov     rax, qword [rbp-8H]                     
         mov     qword [rel headVertex], rax             
-Lable002:  nop                                          
+AddFirstVertex:  nop                                          
         leave                                           
         ret                                             
 ; addVertex End of
 
-addConnection:; begin
+addConnection:
         push    rbp                                     
         mov     rbp, rsp                                
         sub     rsp, 16                                 
@@ -89,19 +89,21 @@ addConnection:; begin
         mov     dword [rax+64H], edx                    
         mov     rax, qword [rel headConnection]         
         test    rax, rax                                
-        jnz     Lable003                                
+        jnz     AddNextConnection                                
         mov     rax, qword [rbp-8H]                     
         mov     qword [rel headConnection], rax         
         mov     rax, qword [rel headConnection]         
-        mov     qword [rax+68H], 0                      
-        jmp     Lable004                                
+        mov     qword [rax+68H], 0                                                    
+        nop
+        leave
+        ret
 
-Lable003:  mov     rdx, qword [rel headConnection]         
+AddNextConnection:  mov     rdx, qword [rel headConnection]         
         mov     rax, qword [rbp-8H]                     
         mov     qword [rax+68H], rdx                    
         mov     rax, qword [rbp-8H]                     
         mov     qword [rel headConnection], rax         
-Lable004:  nop                                          
+        nop                                          
         leave                                           
         ret                                             
 
@@ -111,9 +113,9 @@ printVertices:; begin
         sub     rsp, 16                                 
         mov     rax, qword [rel headVertex]             
         mov     qword [rbp-8H], rax                     
-        jmp     Lable006                                
+        jmp     WhileLoop                                
 
-Lable005:  mov     rax, qword [rbp-8H]                  
+Print:  mov     rax, qword [rbp-8H]                  
         movzx   eax, byte [rax+68H]                     
         movzx   ecx, al                                 
         mov     rax, qword [rbp-8H]                     
@@ -132,43 +134,42 @@ Lable005:  mov     rax, qword [rbp-8H]
         mov     rax, qword [rbp-8H]                     
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-8H], rax                     
-Lable006:  cmp     qword [rbp-8H], 0                    
-        jnz     Lable005                                
+WhileLoop:  cmp     qword [rbp-8H], 0                    
+        jnz     Print                                
         nop                                             
         nop                                             
         leave                                           
-        ret                                             
+        ret    
 
 mainProgram:; begin
         push    rbp                                     
         mov     rbp, rsp                                
-        sub     rsp, 192                                
-        mov     qword [rbp-0B8H], rdi                   
+        sub     rsp, 192          rdi                   
         mov     rax, qword [rel headVertex]             
         mov     qword [rbp-10H], rax                    
-        jmp     Lable009                                
-
-Lable007:  mov     rax, qword [rbp-10H]                 
+        jmp     HeadVertex                                
+        
+CompareVertex:  mov     rax, qword [rbp-10H]                 
         mov     rdx, qword [rbp-0B8H]                   
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcmp                                  
         test    eax, eax                                
-        jnz     Lable008                                
+        jnz     Breaking                                
         mov     rax, qword [rbp-10H]                    
         mov     dword [rax+64H], 0                      
-        jmp     Lable010                                
+        jmp     MainIter                                
 
-Lable008:  mov     rax, qword [rbp-10H]                 
+Breaking:  mov     rax, qword [rbp-10H]                 
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-10H], rax                    
-Lable009:  cmp     qword [rbp-10H], 0                   
-        jnz     Lable007                                
-Lable010:  mov     rax, qword [rel headVertex]          
+HeadVertex:  cmp     qword [rbp-10H], 0                   
+        jnz     CompareVertex                                
+MainIter:  mov     rax, qword [rel headVertex]          
         mov     qword [rbp-18H], rax                    
-        jmp     Lable028                                
+        jmp     EndMain                                
 
-Lable011:  lea     rax, [rbp-70H]                       
+InnerVertex:  lea     rax, [rbp-70H]                       
 
         mov     word [rax], 32                          
         mov     dword [rbp-4H], 999999                  
@@ -177,17 +178,17 @@ Lable011:  lea     rax, [rbp-70H]
         mov     word [rax], 32                          
         mov     rax, qword [rel headVertex]             
         mov     qword [rbp-20H], rax                    
-        jmp     Lable014                                
+        jmp     YetAnotherInnerVertex                                
 
-Lable012:  mov     rax, qword [rbp-20H]                 
+AnotherInnerVertex:  mov     rax, qword [rbp-20H]                 
         movzx   eax, byte [rax+68H]                     
         xor     eax, 01H                                
         test    al, al                                  
-        jz      Lable013                                
+        jz      WeightsCalc                                
         mov     rax, qword [rbp-20H]                    
         mov     eax, dword [rax+64H]                    
         cmp     dword [rbp-4H], eax                     
-        jle     Lable013                                
+        jle     WeightsCalc                                
         mov     rax, qword [rbp-20H]                    
         mov     eax, dword [rax+64H]                    
         mov     dword [rbp-4H], eax                     
@@ -196,49 +197,49 @@ Lable012:  mov     rax, qword [rbp-20H]
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcpy                                  
-Lable013:  mov     rax, qword [rbp-20H]                 
+WeightsCalc:  mov     rax, qword [rbp-20H]                 
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-20H], rax                    
-Lable014:  cmp     qword [rbp-20H], 0                   
-        jnz     Lable012                                
+YetAnotherInnerVertex:  cmp     qword [rbp-20H], 0                   
+        jnz     AnotherInnerVertex                                
         lea     rax, [rbp-70H]                          
         lea     rdx, [rel Lable044]                     
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcmp                                  
         test    eax, eax                                
-        jz      Lable018                                
+        jz      MinimalDistance                                
         mov     rax, qword [rel headVertex]             
         mov     qword [rbp-28H], rax                    
-        jmp     Lable017                                
+        jmp     DistanceMeasure                                
 
-Lable015:  mov     rax, qword [rbp-28H]                 
+Connection:  mov     rax, qword [rbp-28H]                 
         lea     rdx, [rbp-70H]                          
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcmp                                  
         test    eax, eax                                
-        jnz     Lable016                                
+        jnz     Inspection                                
         mov     rax, qword [rbp-28H]                    
         mov     byte [rax+68H], 1                       
-        jmp     Lable018                                   
+        jmp     MinimalDistance                                   
 
-Lable016:  mov     rax, qword [rbp-28H]                    
+Inspection:  mov     rax, qword [rbp-28H]                    
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-28H], rax                    
-Lable017:  cmp     qword [rbp-28H], 0                   
-        jnz     Lable015                                
-Lable018:  mov     rax, qword [rel headConnection]         
+DistanceMeasure:  cmp     qword [rbp-28H], 0                   
+        jnz     Connection                                
+MinimalDistance:  mov     rax, qword [rel headConnection]         
         mov     qword [rbp-30H], rax                    
-        jmp     Lable027                                
+        jmp     FinVertex                                
 
-Lable019:  mov     rax, qword [rbp-30H]                    
+AddVertices:  mov     rax, qword [rbp-30H]                    
         lea     rdx, [rbp-70H]                          
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcmp                                  
         test    eax, eax                                
-        jz      Lable020                                   
+        jz      MoveVertice                                   
         mov     rax, qword [rbp-30H]                    
         lea     rdx, [rax+32H]                          
         lea     rax, [rbp-70H]                          
@@ -246,44 +247,44 @@ Lable019:  mov     rax, qword [rbp-30H]
         mov     rdi, rdx                                
         call    strcmp                                  
         test    eax, eax                                
-        jne     Lable026                                
-Lable020:  mov     rax, qword [rbp-30H]                 
+        jne     AddCloseRelation                                
+MoveVertice:  mov     rax, qword [rbp-30H]                 
         lea     rdx, [rbp-70H]                          
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcmp                                  
         test    eax, eax                                
-        jnz     Lable021                                
+        jnz     MakeConnection                                
         mov     rax, qword [rbp-30H]                    
         lea     rdx, [rax+32H]                          
         lea     rax, [rbp-0B0H]                         
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcpy                                  
-Lable021:  mov     rax, qword [rbp-30H]                 
+MakeConnection:  mov     rax, qword [rbp-30H]                 
         lea     rdx, [rax+32H]                          
         lea     rax, [rbp-70H]                          
         mov     rsi, rax                                
         mov     rdi, rdx                                
         call    strcmp                                  
         test    eax, eax                                
-        jnz     Lable022                                
+        jnz     GetAnotherConnection                                
         mov     rdx, qword [rbp-30H]                    
         lea     rax, [rbp-0B0H]                         
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcpy                                  
-Lable022:  mov     rax, qword [rel headVertex]          
+GetAnotherConnection:  mov     rax, qword [rel headVertex]          
         mov     qword [rbp-38H], rax                    
-        jmp     Lable025                                
+        jmp     Shortcut                                
 
-Lable023:  mov     rax, qword [rbp-38H]                 
+CopyNames:  mov     rax, qword [rbp-38H]                 
         lea     rdx, [rbp-0B0H]                         
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcmp                                  
         test    eax, eax                                
-        jnz     Lable024                                
+        jnz     SearchPath                                
         mov     rax, qword [rbp-38H]                    
         mov     edx, dword [rax+64H]                    
         mov     rax, qword [rbp-30H]                    
@@ -291,7 +292,7 @@ Lable023:  mov     rax, qword [rbp-38H]
         mov     eax, dword [rbp-4H]                     
         add     eax, ecx                                
         cmp     edx, eax                                
-        jle     Lable024                                
+        jle     SearchPath                                
         mov     rax, qword [rbp-38H]                    
         lea     rdx, [rax+32H]                          
         lea     rax, [rbp-70H]                          
@@ -304,30 +305,30 @@ Lable023:  mov     rax, qword [rbp-38H]
         add     edx, eax                                
         mov     rax, qword [rbp-38H]                    
         mov     dword [rax+64H], edx                    
-        jmp     Lable026                                
+        jmp     AddCloseRelation                                
 
-Lable024:  mov     rax, qword [rbp-38H]                 
+SearchPath:  mov     rax, qword [rbp-38H]                 
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-38H], rax                    
-Lable025:  cmp     qword [rbp-38H], 0                   
-        jnz     Lable023                                
-Lable026:  mov     rax, qword [rbp-30H]                 
+Shortcut:  cmp     qword [rbp-38H], 0                   
+        jnz     CopyNames                                
+AddCloseRelation:  mov     rax, qword [rbp-30H]                 
         mov     rax, qword [rax+68H]                    
         mov     qword [rbp-30H], rax                    
-Lable027:  cmp     qword [rbp-30H], 0                   
-        jne     Lable019                                
+FinVertex:  cmp     qword [rbp-30H], 0                   
+        jne     AddVertices                                
         mov     rax, qword [rbp-18H]                    
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-18H], rax                    
-Lable028:  cmp     qword [rbp-18H], 0                   
-        jne     Lable011                                
+EndMain:  cmp     qword [rbp-18H], 0                   
+        jne     InnerVertex                                
         nop                                             
         nop                                             
         leave                                           
         ret                                             
 ; mainProgram End of 
 
-uniqueList:;  begin
+uniqueList:
         push    rbp                                     
         mov     rbp, rsp                                
         sub     rsp, 32                                 
@@ -335,11 +336,11 @@ uniqueList:;  begin
         mov     qword [rbp-8H], rax                     
         jmp     Lable033                                 
 
-Lable029:  mov     rax, qword [rbp-8H]                   
+AssignVertex:  mov     rax, qword [rbp-8H]                   
         mov     qword [rbp-10H], rax                    
         jmp     Lable032                                
 
-Lable030:  mov     rax, qword [rbp-10H]                 
+FreeMemory:  mov     rax, qword [rbp-10H]                 
         mov     rax, qword [rax+70H]                    
         mov     rdx, rax                                
         mov     rax, qword [rbp-8H]                     
@@ -368,7 +369,7 @@ Lable031:  mov     rax, qword [rbp-10H]
 Lable032:  mov     rax, qword [rbp-10H]                 
         mov     rax, qword [rax+70H]                    
         test    rax, rax                                
-        jnz     Lable030                                
+        jnz     FreeMemory                                
         mov     rax, qword [rbp-8H]                     
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-8H], rax                     
@@ -377,7 +378,7 @@ Lable033:  cmp     qword [rbp-8H], 0
         mov     rax, qword [rbp-8H]                     
         mov     rax, qword [rax+70H]                    
         test    rax, rax                                
-        jne     Lable029                                
+        jne     AssignVertex                                
 Lable034:  nop                                          
         leave                                           
         ret                                             
