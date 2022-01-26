@@ -127,7 +127,7 @@ Print:  mov     rax, qword [rbp-8H]
         mov     ecx, edx                                
         mov     rdx, rsi                                
         mov     rsi, rax                                
-        lea     rax, [rel Lable043]                     
+        lea     rax, [rel IDK]                     
         mov     rdi, rax                                
         mov     eax, 0                                  
         call    printf                                  
@@ -203,7 +203,7 @@ WeightsCalc:  mov     rax, qword [rbp-20H]
 YetAnotherInnerVertex:  cmp     qword [rbp-20H], 0                   
         jnz     AnotherInnerVertex                                
         lea     rax, [rbp-70H]                          
-        lea     rdx, [rel Lable044]                     
+        lea     rdx, [rel Allocation]                     
         mov     rsi, rdx                                
         mov     rdi, rax                                
         call    strcmp                                  
@@ -348,7 +348,7 @@ FreeMemory:  mov     rax, qword [rbp-10H]
         mov     rdi, rax                                
         call    strcmp                                  
         test    eax, eax                                
-        jnz     Lable031                                
+        jnz     OmitClear                                
         mov     rax, qword [rbp-10H]                    
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-18H], rax                    
@@ -363,7 +363,7 @@ FreeMemory:  mov     rax, qword [rbp-10H]
         mov     qword [rbp-18H], 0                      
         jmp     TidyUp                                
 
-Lable031:  mov     rax, qword [rbp-10H]                 
+OmitClear:  mov     rax, qword [rbp-10H]                 
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-10H], rax                    
 TidyUp:  mov     rax, qword [rbp-10H]                 
@@ -418,9 +418,9 @@ cleaner:; begin
         mov     qword [rbp-8H], rax                     
         mov     rax, qword [rel headVertex]             
         mov     qword [rbp-18H], rax                    
-        jmp     Lable038                                
+        jmp     CheckCondition                                
 
-Lable037:  mov     rax, qword [rbp-8H]                  
+DeleteParts:  mov     rax, qword [rbp-8H]                  
         mov     rax, qword [rax+70H]                    
         mov     qword [rbp-18H], rax                    
         mov     rax, qword [rbp-8H]                     
@@ -428,8 +428,8 @@ Lable037:  mov     rax, qword [rbp-8H]
         call    free                                    
         mov     rax, qword [rbp-18H]                    
         mov     qword [rbp-8H], rax                     
-Lable038:  cmp     qword [rbp-8H], 0                    
-        jnz     Lable037                                
+CheckCondition:  cmp     qword [rbp-8H], 0                    
+        jnz     DeleteParts                               
         mov     qword [rel headVertex], 0               
         mov     rax, qword [rel headVertex]             
         mov     rdi, rax                                
@@ -438,9 +438,9 @@ Lable038:  cmp     qword [rbp-8H], 0
         mov     qword [rbp-10H], rax                    
         mov     rax, qword [rel headConnection]         
         mov     qword [rbp-20H], rax                    
-        jmp     Lable040                                
+        jmp     ConnectionLoops                                
 
-Lable039:  mov     rax, qword [rbp-10H]                 
+AgainLoop:  mov     rax, qword [rbp-10H]                 
         mov     rax, qword [rax+68H]                    
         mov     qword [rbp-20H], rax                    
         mov     rax, qword [rbp-10H]                    
@@ -448,8 +448,8 @@ Lable039:  mov     rax, qword [rbp-10H]
         call    free                                    
         mov     rax, qword [rbp-20H]                    
         mov     qword [rbp-10H], rax                    
-Lable040:  cmp     qword [rbp-10H], 0                   
-        jnz     Lable039                                
+ConnectionLoops:  cmp     qword [rbp-10H], 0                   
+        jnz     AgainLoop                                
         mov     qword [rel headConnection], 0           
         mov     rax, qword [rel headConnection]         
         mov     rdi, rax                                
@@ -466,28 +466,28 @@ main:
         
         ; important!!
         call    _CRT_INIT                              
-        lea     rax, [rel Lable045]                     
+        lea     rax, [rel Setting]                     
         mov     rsi, rax                                
-        lea     rax, [rel Lable046]                     
+        lea     rax, [rel FileName]                     
         mov     rdi, rax                                
         call    fopen                                   
         mov     qword [rbp-8H], rax                     
         cmp     qword [rbp-8H], 0                       
-        jne     Lable042                                   
-        lea     rax, [rel Lable047]                        
+        jne     Caller                                   
+        lea     rax, [rel ErroLabel]                        
         mov     rdi, rax                                
         mov     eax, 0                                  
         call    printf                                  
         mov     edi, 1                                  
         call    exit                                    
-Lable041:  lea     rax, [rbp-80H]                       
+Initialisation:  lea     rax, [rbp-80H]                       
         lea     rsi, [rax+64H]                          
         lea     rax, [rbp-80H]                          
         lea     rcx, [rax+32H]                          
         lea     rdx, [rbp-80H]                          
         mov     rax, qword [rbp-8H]                     
         mov     r8, rsi                                 
-        lea     rsi, [rel Lable048]                     
+        lea     rsi, [rel SIDKA]                     
         mov     rdi, rax                                
         mov     eax, 0                                  
         call    fscanf                         
@@ -507,11 +507,11 @@ Lable041:  lea     rax, [rbp-80H]
         push    qword [rbp-80H]                         
         call    addConnection                           
         add     rsp, 112                                
-Lable042:  mov     rax, qword [rbp-8H]                  
+Caller:  mov     rax, qword [rbp-8H]                  
         mov     rdi, rax                                
         call    feof                                    
         test    eax, eax                                
-        jz      Lable041                                
+        jz      Initialisation                                
         mov     rax, qword [rbp-8H]                     
         mov     rdi, rax                                
         call    fclose                                  
@@ -519,7 +519,7 @@ Lable042:  mov     rax, qword [rbp-8H]
         call    extractCities                           
         mov     eax, 0                                  
         call    uniqueList                              
-        lea     rax, [rel Lable049]                     
+        lea     rax, [rel BeginningCity]                     
         mov     rdi, rax                                
         call    mainProgram                             
         mov     eax, 0                                  
@@ -546,24 +546,24 @@ headConnection:                                         ; qword
 
 SECTION .rodata                        ; section number 4, const
 
-Lable043:                                                  
+IDK:                                                  
         db "%s - %s - %d - %d", 0AH, 00H                            
 
-Lable044:                                                  
+Allocation:                                                  
         db 20H, 00H                                    
 
-Lable045:                                                  
+Setting:                                                  
         db "rb", 00H                                
 
-Lable046:                                                  
+FileName:                                                  
         db "test.txt", 00H                                          
 
-Lable047:                                                  
+ErroLabel:                                                  
         db "Error!", 00H            
 
-Lable048:                                                  
+SIDKA:                                                  
         db "%s %s %d", 0AH, 00H         
-Lable049:                                                  
+BeginningCity:                                                  
         db "Bydgoszcz", 00H                                     
 
 
