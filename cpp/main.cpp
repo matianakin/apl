@@ -346,6 +346,11 @@ void linearVersion(std::string start)
 
 void prepareParallelization(int threadCount)
 {
+    if(threadCount<1)
+    {
+        std::cout<<"Minimal number of threads is 1";
+        exit(1);
+    }
     auto tempCity = headCity;
     int i =0;
     while(tempCity)
@@ -649,7 +654,7 @@ int main() {
     alphabet();
     auto start = sc.now();
     //linearVersion("Krakow");
-    parallelVersion("Krakow", 8);
+    parallelVersion("Krakow", 16);
     auto end = sc.now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
     std::cout<<"Operation took: "<<time_span.count()<<" seconds !!!\n";
