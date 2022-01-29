@@ -17,10 +17,14 @@ ThreadHead* tHead = nullptr;
 std::mutex m;
 std::vector<ListOfCities*> myList;
 
-void checkForDuplicateCities(ListOfCities* head)
+void checkForDuplicateCities()
 {
-    auto temp = head;
-    auto temp2 = head->next;
+    auto temp = headCity;
+    ListOfCities* temp2 = nullptr;
+    if(headCity)
+    {
+        temp2 = headCity->next;
+    }
     while(temp)
     {
         bool changed = false;
@@ -51,10 +55,14 @@ void checkForDuplicateCities(ListOfCities* head)
     }
 }
 
-void checkForDuplicateConnections(ListOfConnections* head)
+void checkForDuplicateConnections()
 {
-    auto temp = head;
-    auto temp2 = head->next;
+    auto temp = headConnection;
+    ListOfConnections* temp2 = nullptr;
+    if(headConnection)
+    {
+        temp2 = headConnection->next;
+    }
     while(temp)
     {
         bool changed = false;
@@ -149,8 +157,8 @@ void importFromFile(std::string filename)
                 i++;
             }
         }
-        checkForDuplicateCities(headCity);
-        checkForDuplicateConnections(headConnection);
+        checkForDuplicateCities();
+        checkForDuplicateConnections();
     }
     file.close();
 }

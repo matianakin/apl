@@ -1,13 +1,14 @@
 #include <stdio.h>
-#include <fstream>
-#include <chrono>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
 #include "stdbool.h"
 
 struct ListOfCities {
     struct ListOfCities* next;
     struct ListOfCities* prev;
-    char* city;
-    char* prevCity;
+    char city[15];
+    char prevCity[15];
     int distance;
     bool visited;
 };
@@ -15,80 +16,188 @@ struct ListOfCities {
 struct ListOfConnections{
         struct ListOfConnections * next;
         struct ListOfConnections* prev;
-        char* city1;
-        char* city2;
+        char city1[15];
+        char city2[15];
         int distance;
 };
 
 struct ListOfCities* headCity=NULL;
 struct ListOfConnections* headConnection = NULL;
 
+void readListOfCities()
+{
+    struct ListOfCities* tempCity = headCity;
+    while (tempCity)
+    {
+        char text1[256];
+        strcpy(text1,"\ncity: ");
+        char text2[256];
+        strcpy(text2, tempCity->city);
+        char text3[256];
+        strcpy(text3, " Distance from source: ");
+        char text5[256];
+        strcpy(text5," Previous city: ");
+        char text6[256];
+        strcpy(text6,tempCity->prevCity);
+        strcat(text1, text2);
+        strcat(text1, text3);
+        strcat(text5, text6);
+        printf("%s %i %s", text1, tempCity->distance, text5);
+        tempCity = tempCity->next;
+    }
+}
+
+void checkForDuplicateCities()
+{
+    struct ListOfCities* temp = headCity;
+    struct ListOfCities *temp2 = NULL;
+    if(headCity) {
+        temp2 = headCity->next;
+    }
+    while(temp)
+    {
+        bool changed = false;
+        while(temp2) {
+
+            if (strcmp(temp->city,temp2->city) == 0) {
+                struct ListOfCities* temp3 = temp2;
+                temp2 = temp3->next;
+                if(temp2) {
+                    temp2->prev = temp3->prev;
+                }
+                temp3->prev->next=temp2;
+                free(temp3);
+                changed = true;
+            }
+            if(!changed&&temp2)
+            {
+                temp2 = temp2->next;
+            }
+            else
+            {
+                changed = false;
+            }
+        }
+        temp = temp->next;
+        if(temp)
+            temp2 = temp->next;
+    }
+}
+
+void checkForDuplicateConnections()
+{
+    struct ListOfConnections* temp = headConnection;
+    struct ListOfConnections *temp2 = NULL;
+    if(headConnection) {
+        temp2 = headConnection->next;
+    }
+    while(temp)
+    {
+        bool changed = false;
+        while(temp2) {
+
+            if ((temp->city1 == temp2->city1 && temp->city2 == temp2->city2)||(temp->city1 == temp2->city2 && temp->city2 == temp2->city1)) {
+                struct ListOfConnections* temp3 = temp2;
+                temp2 = temp3->next;
+                temp3->prev->next = temp2;
+                if(temp2) {
+                    temp2->prev = temp3->prev;
+                }
+                free(temp3);
+                changed = true;
+            }
+            if(!changed&&temp2)
+            {
+                temp2 = temp2->next;
+            }
+            else
+            {
+                changed = false;
+            }
+        }
+        temp = temp->next;
+        if(temp)
+            temp2 = temp->next;
+    }
+}
+
 void importFromFile(char* filename)
 {
     FILE* file = fopen(filename, "r");
     if(file)
     {
-        char* temp;
-        char* tempcity1;
-        char* tempcity2;
-        int tempdistance;
+        char tempcity1[15];
+        char tempcity2[15];
+        int tempdistance=0;
         int j=0;
-        int i=0;
-        while(fgets(temp, sizeof(temp), file))
+        while(fscanf(file,"%s %s %i", tempcity1, tempcity2, &tempdistance)>0)
         {
-            switch (i) {
-                case 0:
-                {
-                    tempcity1 =temp;
-                    break;
-                }
-                case 1:
-                {
-                    tempcity2 =temp;
-                    break;
-                }
-                case 2:
-                {
-                    tempdistance=strtol(temp,  NULL, 10);
-                    break;
-                }
-            }
-            if(i==2) {
                 if (j == 0) {
-                    /*auto city1 = new ListOfCities(tempcity1);
-                    delete headCity;
-                    headCity = city1;
-                    auto con1 = new ListOfConnections(tempcity1, tempcity2, tempdistance);
-                    delete headConnection;
-                    headConnection = con1;
-                    auto tempCity = headCity;
+                    struct ListOfCities* city1 = malloc(sizeof(struct ListOfCities));
+                    city1->next = NULL;
+                    city1->prev = NULL;
+                    strcpy(city1->city,tempcity1);
+                    city1->distance=INT_MAX;
+                    city1->visited = false;
+                    strcpy(city1->prevCity,"");
+                    headCity=city1;
+                    struct ListOfConnections* con1 = malloc(sizeof(struct ListOfConnections));
+                    con1->next=NULL;
+                    con1->prev = NULL;
+                    strcpy(con1->city1,tempcity1);
+                    strcpy(con1->city2,tempcity2);
+                    con1->distance=tempdistance;
+                    headConnection=con1;
+                    struct ListOfCities* tempCity = headCity;
                     while (tempCity->next) {
                         tempCity = tempCity->next;
                     }
-                    auto *city2 = new ListOfCities(tempcity2, tempCity);
+                    struct ListOfCities* city2 = malloc(sizeof(struct ListOfCities));
+                    city2->next = NULL;
+                    city2->prev = tempCity;
+                    tempCity->next=city2;
+                    strcpy(city2->city,tempcity2);
+                    city2->distance=INT_MAX;
+                    city2->visited = false;
+                    strcpy(city2->prevCity,"");
                 } else {
-                    auto tempCity = headCity;
+                    struct ListOfCities* tempCity = headCity;
                     while (tempCity->next) {
                         tempCity = tempCity->next;
                     }
-                    auto city1 = new ListOfCities(tempcity1, tempCity);
-                    auto city2 = new ListOfCities(tempcity2, tempCity->next);
-                    auto tempCon = headConnection;
+                    struct ListOfCities* city1 = malloc(sizeof(struct ListOfCities));
+                    struct ListOfCities* city2 = malloc(sizeof(struct ListOfCities));
+                    struct ListOfConnections* con1 = malloc(sizeof(struct ListOfConnections));
+                    city1->prev = tempCity;
+                    tempCity->next=city1;
+                    strcpy(city1->city,tempcity1);
+                    city1->distance=INT_MAX;
+                    city1->visited = false;
+                    strcpy(city1->prevCity,"");
+                    city2->next = NULL;
+                    city2->prev = city1;
+                    strcpy(city2->city,tempcity2);
+                    city2->distance=INT_MAX;
+                    city2->visited = false;
+                    strcpy(city2->prevCity,"");
+                    city1->next = city2;
+                    struct ListOfConnections* tempCon = headConnection;
                     while (tempCon->next) {
                         tempCon = tempCon->next;
                     }
-                    auto con1 = new ListOfConnections(tempcity1, tempcity2, tempdistance, tempCon);*/
+                    con1->next=NULL;
+                    con1->prev = tempCon;
+                    tempCon->next=con1;
+                    strcpy(con1->city1,tempcity1);
+                    strcpy(con1->city2,tempcity2);
+                    con1->distance=tempdistance;
                 }
-                i=0;
                 j++;
-            }
-            else
-            {
-                i++;
-            }
+
+
         }
-        //checkForDuplicateCities(headCity);
-        //checkForDuplicateConnections(headConnection);
+        checkForDuplicateCities();
+        checkForDuplicateConnections();
     }
     else
     {
@@ -101,6 +210,6 @@ void importFromFile(char* filename)
 
 int main() {
     importFromFile("D:/GitHub/apl/cpp/test.txt");
-    printf("Hello, World!\n");
+    readListOfCities();
     return 0;
 }
