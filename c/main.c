@@ -7,8 +7,8 @@
 struct ListOfCities {
     struct ListOfCities* next;
     struct ListOfCities* prev;
-    char city[15];
-    char prevCity[15];
+    char city[256];
+    char prevCity[256];
     int distance;
     bool visited;
 };
@@ -16,33 +16,57 @@ struct ListOfCities {
 struct ListOfConnections{
         struct ListOfConnections * next;
         struct ListOfConnections* prev;
-        char city1[15];
-        char city2[15];
+        char city1[256];
+        char city2[256];
         int distance;
 };
 
 struct ListOfCities* headCity=NULL;
 struct ListOfConnections* headConnection = NULL;
 
+void alphabet()
+{
+    struct ListOfCities* tempCity = headCity;
+    struct ListOfCities* tempCity2=tempCity;
+    int i=0;
+    while(tempCity2)
+    {
+        i++;
+        tempCity2=tempCity2->next;
+    }
+    for(int j=0; j<i; j++) {
+        while (tempCity&&tempCity->next){
+            if (strcmp(tempCity->city,tempCity->next->city)>0) {
+                struct ListOfCities* tempCityNext = tempCity->next;
+                struct ListOfCities* tempCityNextNext = tempCityNext->next;
+                struct ListOfCities* tempCityPrev = tempCity->prev;
+                if (tempCityNextNext) {
+                    tempCityNextNext->prev = tempCity;
+                }
+                tempCityNext->next = tempCity;
+                tempCity->prev = tempCityNext;
+                tempCity->next = tempCityNextNext;
+                tempCityNext->prev = tempCityPrev;
+                if (tempCityPrev) {
+                    tempCityPrev->next = tempCityNext;
+                }
+            }
+            tempCity = tempCity->next;
+        }
+        while(headCity->prev)
+        {
+            headCity=headCity->prev;
+        }
+        tempCity = headCity;
+    }
+}
+
 void readListOfCities()
 {
     struct ListOfCities* tempCity = headCity;
     while (tempCity)
     {
-        char text1[256];
-        strcpy(text1,"\ncity: ");
-        char text2[256];
-        strcpy(text2, tempCity->city);
-        char text3[256];
-        strcpy(text3, " Distance from source: ");
-        char text5[256];
-        strcpy(text5," Previous city: ");
-        char text6[256];
-        strcpy(text6,tempCity->prevCity);
-        strcat(text1, text2);
-        strcat(text1, text3);
-        strcat(text5, text6);
-        printf("%s %i %s", text1, tempCity->distance, text5);
+        printf("%s %s %s %i %s %s", "\ncity: ", tempCity->city, " Distance from source: ", tempCity->distance, " Previous city: ", tempCity->prevCity);
         tempCity = tempCity->next;
     }
 }
@@ -69,7 +93,7 @@ void checkForDuplicateCities()
                 free(temp3);
                 changed = true;
             }
-            if(!changed&&temp2)
+            if(!changed)
             {
                 temp2 = temp2->next;
             }
@@ -106,7 +130,7 @@ void checkForDuplicateConnections()
                 free(temp3);
                 changed = true;
             }
-            if(!changed&&temp2)
+            if(!changed)
             {
                 temp2 = temp2->next;
             }
@@ -207,9 +231,93 @@ void importFromFile(char* filename)
     fclose(file);
 }
 
+void linearVersion(char start[15])
+{
+
+    struct ListOfCities* startCity = headCity;
+    bool finished = false;
+    while(startCity)
+    {
+        if(strcmp(startCity->city,start)==0)
+        {
+            startCity->distance =0;
+            startCity->visited=true;
+            strcpy(startCity->prevCity,"<---  This is the starting vector");
+            break;
+        }
+        startCity=startCity->next;
+        if(!startCity)
+        {
+            printf("%s", "Incorrect city provided as a start point\n");
+            exit(1);
+        }
+    }
+
+    struct ListOfCities* current = startCity;
+
+    do {
+        finished=true;
+        struct ListOfConnections* connectionIterator = headConnection;
+        while (connectionIterator) {
+            if (strcmp(connectionIterator->city1,current->city)==0) {
+                struct ListOfCities* analyzedCity = headCity;
+                int road = current->distance + connectionIterator->distance;
+                while (analyzedCity) {
+                    if (strcmp(analyzedCity->city,connectionIterator->city2)==0) {
+                        break;
+                    }
+                    analyzedCity=analyzedCity->next;
+                }
+                if(!analyzedCity->visited) {
+                    if (analyzedCity->distance > road) {
+                        strcpy(analyzedCity->prevCity, current->city);
+                        //changeDistance(analyzedCity, road);
+                        analyzedCity->distance=road;
+                    }
+                }
+            }
+            else if(strcmp(connectionIterator->city2,current->city)==0)
+            {
+                struct ListOfCities* analyzedCity = headCity;
+                int road = current->distance + connectionIterator->distance;
+                while (analyzedCity) {
+                    if (strcmp(analyzedCity->city,connectionIterator->city1)==0) {
+                        break;
+                    }
+                    analyzedCity=analyzedCity->next;
+                }
+                if(!analyzedCity->visited) {
+                    if (analyzedCity->distance > road) {
+                        strcpy(analyzedCity->prevCity, current->city);
+                        //changeDistance(analyzedCity, road);
+                        analyzedCity->distance=road;
+                    }
+                }
+            }
+            connectionIterator = connectionIterator->next;
+        }
+
+
+        int tempDist=INT_MAX;
+        struct ListOfCities* tempCity = headCity;
+        while(tempCity)
+        {
+            if(!tempCity->visited && tempCity->distance < tempDist) {
+                current = tempCity;
+                tempDist=tempCity->distance;
+                finished = false;
+            }
+            tempCity = tempCity->next;
+        }
+        current->visited = true;
+
+    }while(!finished);
+}
 
 int main() {
     importFromFile("D:/GitHub/apl/cpp/test.txt");
+    alphabet();
+    linearVersion("Krakow");
     readListOfCities();
     return 0;
 }

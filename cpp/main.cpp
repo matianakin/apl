@@ -40,7 +40,7 @@ void checkForDuplicateCities()
                 delete temp3;
                 changed = true;
             }
-            if(!changed&&temp2)
+            if(!changed)
             {
                 temp2 = temp2->next;
             }
@@ -78,7 +78,7 @@ void checkForDuplicateConnections()
                 delete temp3;
                 changed = true;
             }
-            if(!changed&&temp2)
+            if(!changed)
             {
                 temp2 = temp2->next;
             }
