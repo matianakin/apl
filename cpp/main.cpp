@@ -491,13 +491,11 @@ void alphabet()
 }
 
 int main() {
-    std::chrono::steady_clock sc;   // create an object of `steady_clock` class
-
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
     auto start = std::chrono::steady_clock::now();
     //linearVersion("Krakow");
-    parallelVersion("Krakow", 1);
+    //parallelVersion("Krakow", 1);
     auto end = std::chrono::steady_clock::now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
     std::cout<<"Operation took: "<<time_span.count()<<" seconds !!!\n";
