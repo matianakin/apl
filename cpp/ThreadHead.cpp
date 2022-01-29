@@ -30,8 +30,9 @@ ThreadHead::ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities 
     curHead->prev=this;
 }
 
+/*
 void ThreadHead::overrider(ListOfCities *subHead, ListOfCities *subEnd)
 {
     this->subHead=subHead;
     this->subEnd=subEnd;
-}
+}*/

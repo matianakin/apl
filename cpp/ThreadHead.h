@@ -19,7 +19,7 @@ class ThreadHead {
 
     public:ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities *subEnd);
 
-    public: void overrider(ListOfCities *subHead, ListOfCities *subEnd);
+    //public: void overrider(ListOfCities *subHead, ListOfCities *subEnd);
 };
 
 
