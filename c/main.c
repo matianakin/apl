@@ -3,6 +3,8 @@
 #include <string.h>
 #include <limits.h>
 #include "stdbool.h"
+#include "time.h"
+
 
 struct ListOfCities {
     struct ListOfCities* next;
@@ -154,7 +156,7 @@ void importFromFile(char* filename)
         char tempcity2[15];
         int tempdistance=0;
         int j=0;
-        while(fscanf(file,"%s %s %i", tempcity1, tempcity2, &tempdistance)>0)
+        while(fscanf(file,"%s %s %i", tempcity1, tempcity2, &tempdistance)>0) // NOLINT(cert-err34-c)
         {
                 if (j == 0) {
                     struct ListOfCities* city1 = malloc(sizeof(struct ListOfCities));
@@ -231,7 +233,7 @@ void importFromFile(char* filename)
     fclose(file);
 }
 
-void linearVersion(char start[15])
+void linearVersion(char start[256])
 {
 
     struct ListOfCities* startCity = headCity;
@@ -268,12 +270,9 @@ void linearVersion(char start[15])
                     }
                     analyzedCity=analyzedCity->next;
                 }
-                if(!analyzedCity->visited) {
-                    if (analyzedCity->distance > road) {
-                        strcpy(analyzedCity->prevCity, current->city);
-                        //changeDistance(analyzedCity, road);
-                        analyzedCity->distance=road;
-                    }
+                if(!analyzedCity->visited && analyzedCity->distance > road) {
+                    strcpy(analyzedCity->prevCity, current->city);
+                    analyzedCity->distance=road;
                 }
             }
             else if(strcmp(connectionIterator->city2,current->city)==0)
@@ -286,17 +285,13 @@ void linearVersion(char start[15])
                     }
                     analyzedCity=analyzedCity->next;
                 }
-                if(!analyzedCity->visited) {
-                    if (analyzedCity->distance > road) {
-                        strcpy(analyzedCity->prevCity, current->city);
-                        //changeDistance(analyzedCity, road);
-                        analyzedCity->distance=road;
-                    }
+                if(!analyzedCity->visited && analyzedCity->distance > road) {
+                    strcpy(analyzedCity->prevCity, current->city);
+                    analyzedCity->distance=road;
                 }
             }
             connectionIterator = connectionIterator->next;
         }
-
 
         int tempDist=INT_MAX;
         struct ListOfCities* tempCity = headCity;
@@ -317,7 +312,11 @@ void linearVersion(char start[15])
 int main() {
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
+    clock_t start = clock();
     linearVersion("Krakow");
+    clock_t end = clock();
+    double seconds = (double)(end - start)/ CLOCKS_PER_SEC;
+    printf("%f", seconds);
     readListOfCities();
     return 0;
 }

@@ -1,7 +1,14 @@
 # ninja log v5
 1	2206	6651189112414296	CMakeFiles/cpp.dir/main.cpp.obj	146f0d6da9cca545
-5	708	6651210511118620	build.ninja	f4d446fdbf82c7d1
+5	708	6651630055515799	build.ninja	f4d446fdbf82c7d1
 346	3470	6648451984334216	CMakeFiles/cpp.dir/ListOfConnections.cpp.obj	fb4521d9a41f6d75
 2207	3947	6651189128416140	cpp.exe	57ce2d5592be374e
 24	3347	6648451982653219	CMakeFiles/cpp.dir/ListOfCities.cpp.obj	10285deed1c3dabc
 17	2208	6651157450928822	CMakeFiles/cpp.dir/ThreadHead.cpp.obj	b9fc82bc607a5995
+80	1312	6651630082583413	CMakeFiles/cpp.dir/ThreadHead.cpp.obj	b9fc82bc607a5995
+54	1363	6651630083141918	CMakeFiles/cpp.dir/ListOfConnections.cpp.obj	fb4521d9a41f6d75
+1	1423	6651630083720376	CMakeFiles/cpp.dir/ListOfCities.cpp.obj	10285deed1c3dabc
+21	1649	6651630085974325	CMakeFiles/cpp.dir/main.cpp.obj	146f0d6da9cca545
+1652	5178	6651630120795574	cpp.exe	57ce2d5592be374e
+1	1274	6651630264057558	CMakeFiles/cpp.dir/main.cpp.obj	146f0d6da9cca545
+1275	2568	6651630275596710	cpp.exe	57ce2d5592be374e
