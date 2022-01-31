@@ -321,13 +321,6 @@ void prepareParallelization(int threadCount)
         auto tempThreader = new ThreadHead(tHead, tempCityHead, tempCityTail);
         tHead=tempThreader;
     }
-    /*auto threadIndex = tHead;
-    while (threadIndex)
-    {
-        if(threadIndex->subEnd)
-        //threadIndex->subEnd->next=nullptr;
-        threadIndex = threadIndex->next;
-    }*/
 }
 
 void oneThreadVer1(ThreadHead* th, std::string citySearch, int road)
@@ -578,9 +571,10 @@ void alphabet()
 }
 
 int main() {
-    auto start = std::chrono::steady_clock::now();
+
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
+    auto start = std::chrono::steady_clock::now();
     //linearVersion("Krakow");
     parallelVersionVer2("Krakow", 4);
     readListOfCities();

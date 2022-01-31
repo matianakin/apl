@@ -7,12 +7,13 @@
 
 
 class ListOfCities {
-    public: ListOfCities* next;
-    public: ListOfCities* prev;
-    public: std::string city;
-    public: std::string prevCity;
-    public: int distance;
-    public: bool visited;
+    public:
+    ListOfCities* next;
+    ListOfCities* prev;
+    std::string city;
+    std::string prevCity;
+    int distance;
+    bool visited;
 
     ListOfCities();
 

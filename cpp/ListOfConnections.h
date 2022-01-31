@@ -7,11 +7,12 @@
 #include <iostream>
 
 class ListOfConnections {
-public: ListOfConnections* next;
-public: ListOfConnections* prev;
-public: std::string city1;
-public: std::string city2;
-public: int distance;
+public:
+    ListOfConnections* next;
+    ListOfConnections* prev;
+    std::string city1;
+    std::string city2;
+    int distance;
 
     ListOfConnections();
 

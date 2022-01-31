@@ -5,7 +5,6 @@
 #include "stdbool.h"
 #include "time.h"
 
-
 struct ListOfCities {
     struct ListOfCities* next;
     struct ListOfCities* prev;
@@ -233,6 +232,24 @@ void importFromFile(char* filename)
     fclose(file);
 }
 
+//to na asm
+void inLoop(struct ListOfCities* current, struct ListOfConnections* connectionIterator, char* nameCity)
+{
+    struct ListOfCities* analyzedCity = headCity;
+    int road = current->distance + connectionIterator->distance;
+    while (analyzedCity) {
+        if (strcmp(analyzedCity->city,nameCity)==0) {
+            break;
+        }
+        analyzedCity=analyzedCity->next;
+    }
+    if(!analyzedCity->visited && analyzedCity->distance > road) {
+        strcpy(analyzedCity->prevCity, current->city);
+        analyzedCity->distance=road;
+    }
+}
+
+//to tez na asm
 void linearVersion(char start[256])
 {
 
@@ -262,33 +279,11 @@ void linearVersion(char start[256])
         struct ListOfConnections* connectionIterator = headConnection;
         while (connectionIterator) {
             if (strcmp(connectionIterator->city1,current->city)==0) {
-                struct ListOfCities* analyzedCity = headCity;
-                int road = current->distance + connectionIterator->distance;
-                while (analyzedCity) {
-                    if (strcmp(analyzedCity->city,connectionIterator->city2)==0) {
-                        break;
-                    }
-                    analyzedCity=analyzedCity->next;
-                }
-                if(!analyzedCity->visited && analyzedCity->distance > road) {
-                    strcpy(analyzedCity->prevCity, current->city);
-                    analyzedCity->distance=road;
-                }
+                inLoop(current, connectionIterator, connectionIterator->city2);
             }
             else if(strcmp(connectionIterator->city2,current->city)==0)
             {
-                struct ListOfCities* analyzedCity = headCity;
-                int road = current->distance + connectionIterator->distance;
-                while (analyzedCity) {
-                    if (strcmp(analyzedCity->city,connectionIterator->city1)==0) {
-                        break;
-                    }
-                    analyzedCity=analyzedCity->next;
-                }
-                if(!analyzedCity->visited && analyzedCity->distance > road) {
-                    strcpy(analyzedCity->prevCity, current->city);
-                    analyzedCity->distance=road;
-                }
+                inLoop(current, connectionIterator, connectionIterator->city1);
             }
             connectionIterator = connectionIterator->next;
         }

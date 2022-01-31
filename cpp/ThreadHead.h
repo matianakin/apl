@@ -8,16 +8,17 @@
 
 
 class ThreadHead {
-    public:ThreadHead *next;
-    public:ThreadHead *prev;
-    public:ListOfCities *subHead;
-    public:ListOfCities *subEnd;
+    public:
+    ThreadHead *next;
+    ThreadHead *prev;
+    ListOfCities *subHead;
+    ListOfCities *subEnd;
 
-    public:ThreadHead();
+    ThreadHead();
 
-    public:ThreadHead(ListOfCities *subHead, ListOfCities *subEnd);
+    ThreadHead(ListOfCities *subHead, ListOfCities *subEnd);
 
-    public:ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities *subEnd);
+    ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities *subEnd);
 
     //public: void overrider(ListOfCities *subHead, ListOfCities *subEnd);
 };
