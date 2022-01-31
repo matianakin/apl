@@ -15,7 +15,7 @@ ListOfCities* headCity=nullptr;
 ListOfConnections* headConnection = nullptr;
 ThreadHead* tHead = nullptr;
 std::mutex m;
-std::vector<ListOfCities*> myList;
+ListOfCities*current = nullptr;
 
 void checkForDuplicateCities()
 {
@@ -205,7 +205,7 @@ void linearVersion(std::string start)
         }
     }
 
-    auto current = startCity;
+    current = startCity;
 
     do {
         finished=true;
@@ -330,7 +330,7 @@ void prepareParallelization(int threadCount)
     }*/
 }
 
-void oneThread(ThreadHead* th,  std::string citySearch)
+void oneThreadVer1(ThreadHead* th, std::string citySearch, int road)
 {
     auto analyzedCity = th->subHead;
     bool broken = false;
@@ -346,15 +346,36 @@ void oneThread(ThreadHead* th,  std::string citySearch)
         analyzedCity = analyzedCity->next;
     }
     if(broken) {
-        if (!analyzedCity->visited) {
+        if (!analyzedCity->visited&&analyzedCity->distance > road) {
             m.lock();
-            myList.push_back(analyzedCity);
+            analyzedCity->prevCity = current->city;
+            analyzedCity->distance=road;
             m.unlock();
         }
     }
 }
 
-void parallelVersion(std::string start, int nth)
+void oneThreadVer2(ThreadHead* th, int &tempDist,  bool &finished)
+{
+    auto tempCity = th->subHead;
+    bool broken = false;
+    while (tempCity) {
+        if(th->subEnd && tempCity == th->subEnd->next)
+        {
+            break;
+        }
+        if(!tempCity->visited && tempCity->distance < tempDist) {
+            m.lock();
+            current = tempCity;
+            tempDist=tempCity->distance;
+            finished = false;
+            m.unlock();
+        }
+        tempCity = tempCity->next;
+    }
+}
+
+void parallelVersionVer1(std::string start, int nth)
 {
     auto startCity = headCity;
     bool finished = false;
@@ -374,7 +395,7 @@ void parallelVersion(std::string start, int nth)
             exit(1);
         }
     }
-    auto current = startCity;
+    current = startCity;
     int noOfThreads =nth;
 
     prepareParallelization(noOfThreads);
@@ -391,7 +412,7 @@ void parallelVersion(std::string start, int nth)
                 std::string cit = connectionIterator->city2;
                 while(tempT)
                 {
-                    auto* myThread = new std::thread(oneThread, tempT, cit);
+                    auto* myThread = new std::thread(oneThreadVer1, tempT, cit, road);
                     ThreadVector.push_back(myThread);
                     tempT=tempT->next;
                 }
@@ -399,16 +420,6 @@ void parallelVersion(std::string start, int nth)
                 {
                     i->join();
                 }
-
-                for(auto & analyzedCity : myList)
-                {
-                    if (analyzedCity->distance > road) {
-                        analyzedCity->prevCity = current->city;
-                        //changeDistance(analyzedCity, road);
-                        analyzedCity->distance=road;
-                    }
-                }
-                myList.clear();
 
             } else if (connectionIterator->city2 == current->city) {
 
@@ -418,7 +429,7 @@ void parallelVersion(std::string start, int nth)
                 std::string cit = connectionIterator->city1;
                 while(tempT)
                 {
-                    auto* myThread = new std::thread(oneThread, tempT, cit);
+                    auto* myThread = new std::thread(oneThreadVer1, tempT, cit, road);
                     ThreadVector.push_back(myThread);
                     tempT=tempT->next;
                 }
@@ -426,16 +437,6 @@ void parallelVersion(std::string start, int nth)
                 {
                     i->join();
                 }
-
-                for(auto & analyzedCity : myList)
-                {
-                    if (analyzedCity->distance > road) {
-                        analyzedCity->prevCity = current->city;
-                        //changeDistance(analyzedCity, road);
-                        analyzedCity->distance=road;
-                    }
-                }
-                myList.clear();
 
             }
             connectionIterator = connectionIterator->next;
@@ -454,7 +455,89 @@ void parallelVersion(std::string start, int nth)
         }
         current->visited = true;
     }while(!finished);
-    //unThread();
+}
+
+void parallelVersionVer2(std::string start, int nth)
+{
+    auto startCity = headCity;
+    bool finished = false;
+    while(startCity)
+    {
+        if(startCity->city==start)
+        {
+            startCity->distance =0;
+            startCity->visited=true;
+            startCity->prevCity = "<---  This is the starting vector";
+            break;
+        }
+        startCity=startCity->next;
+        if(!startCity)
+        {
+            std::cout<<"Incorrect city provided as a start point"<<std::endl;
+            exit(1);
+        }
+    }
+    current = startCity;
+    int noOfThreads =nth;
+
+    prepareParallelization(noOfThreads);
+
+    do {
+        finished=true;
+        auto connectionIterator = headConnection;
+        while (connectionIterator) {
+            if (connectionIterator->city1 == current->city) {
+                auto analyzedCity = headCity;
+                int road = current->distance + connectionIterator->distance;
+                while (analyzedCity) {
+                    if (analyzedCity->city == connectionIterator->city2) {
+                        break;
+                    }
+                    analyzedCity=analyzedCity->next;
+                }
+                if(!analyzedCity->visited && analyzedCity->distance > road) {
+                    analyzedCity->prevCity = current->city;
+                    //changeDistance(analyzedCity, road);
+                    analyzedCity->distance=road;
+                }
+            }
+            else if(connectionIterator->city2 == current->city)
+            {
+                auto analyzedCity = headCity;
+                int road = current->distance + connectionIterator->distance;
+                while (analyzedCity) {
+                    if (analyzedCity->city == connectionIterator->city1) {
+                        break;
+                    }
+                    analyzedCity=analyzedCity->next;
+                }
+                if(!analyzedCity->visited && analyzedCity->distance > road) {
+                    analyzedCity->prevCity = current->city;
+                    //changeDistance(analyzedCity, road);
+                    analyzedCity->distance=road;
+                }
+            }
+            connectionIterator = connectionIterator->next;
+        }
+
+
+        int tempDist=INT32_MAX;
+        auto tempT = tHead;
+        std::vector<std::thread*> ThreadVector;
+        while(tempT)
+        {
+            auto* myThread = new std::thread(oneThreadVer2, tempT, std::ref(tempDist), std::ref(finished));
+            ThreadVector.push_back(myThread);
+            tempT=tempT->next;
+        }
+        for(auto & i : ThreadVector)
+        {
+            i->join();
+        }
+        current->visited = true;
+
+    }while(!finished);
+
 }
 
 void alphabet()
@@ -495,14 +578,14 @@ void alphabet()
 }
 
 int main() {
+    auto start = std::chrono::steady_clock::now();
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
-    auto start = std::chrono::steady_clock::now();
-    linearVersion("Krakow");
-    //parallelVersion("Krakow", 1);
+    //linearVersion("Krakow");
+    parallelVersionVer2("Krakow", 4);
+    readListOfCities();
     auto end = std::chrono::steady_clock::now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
-    std::cout<<"Operation took: "<<time_span.count()<<" seconds !!!\n";
-    readListOfCities();
+    std::cout<<"\n"<<time_span.count()<<" s\n";
     return 0;
 }

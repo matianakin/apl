@@ -310,13 +310,14 @@ void linearVersion(char start[256])
 }
 
 int main() {
+
+    clock_t start = clock();
     importFromFile("D:/GitHub/apl/cpp/test.txt");
     alphabet();
-    clock_t start = clock();
     linearVersion("Krakow");
+    readListOfCities();
     clock_t end = clock();
     double seconds = (double)(end - start)/ CLOCKS_PER_SEC;
-    printf("%f", seconds);
-    readListOfCities();
+    printf("\n%f %s", seconds, "s");
     return 0;
 }
