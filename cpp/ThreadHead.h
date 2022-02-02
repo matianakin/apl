@@ -4,23 +4,23 @@
 
 #ifndef CPP_THREADHEAD_H
 #define CPP_THREADHEAD_H
-#include "ListOfCities.h"
+#include "ListOfNodes.h"
 
 
 class ThreadHead {
     public:
     ThreadHead *next;
     ThreadHead *prev;
-    ListOfCities *subHead;
-    ListOfCities *subEnd;
+    ListOfNodes *subHead;
+    ListOfNodes *subEnd;
 
     ThreadHead();
 
-    ThreadHead(ListOfCities *subHead, ListOfCities *subEnd);
+    ThreadHead(ListOfNodes *subHead, ListOfNodes *subEnd);
 
-    ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities *subEnd);
+    ThreadHead(ThreadHead* curHead, ListOfNodes *subHead, ListOfNodes *subEnd);
 
-    //public: void overrider(ListOfCities *subHead, ListOfCities *subEnd);
+    //public: void overrider(ListOfNodes *subHead, ListOfNodes *subEnd);
 };
 
 

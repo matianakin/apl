@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ListOfCities.h"
+#include "ListOfNodes.h"
 #include "ListOfConnections.h"
 #include "ThreadHead.h"
 #include <fstream>
@@ -11,16 +11,16 @@
 #include <cstring>
 
 
-ListOfCities* headCity=nullptr;
+ListOfNodes* headCity=nullptr;
 ListOfConnections* headConnection = nullptr;
 ThreadHead* tHead = nullptr;
 std::mutex m;
-ListOfCities*current = nullptr;
+ListOfNodes*current = nullptr;
 
 void checkForDuplicateCities()
 {
     auto temp = headCity;
-    ListOfCities* temp2 = nullptr;
+    ListOfNodes* temp2 = nullptr;
     if(headCity)
     {
         temp2 = headCity->next;
@@ -125,7 +125,7 @@ void importFromFile(std::string filename)
             }
             if(i==2) {
                 if (j == 0) {
-                    auto city1 = new ListOfCities(tempcity1);
+                    auto city1 = new ListOfNodes(tempcity1);
                     delete headCity;
                     headCity = city1;
                     auto con1 = new ListOfConnections(tempcity1, tempcity2, tempdistance);
@@ -135,14 +135,14 @@ void importFromFile(std::string filename)
                     while (tempCity->next) {
                         tempCity = tempCity->next;
                     }
-                    auto *city2 = new ListOfCities(tempcity2, tempCity);
+                    auto *city2 = new ListOfNodes(tempcity2, tempCity);
                 } else {
                     auto tempCity = headCity;
                     while (tempCity->next) {
                         tempCity = tempCity->next;
                     }
-                    auto city1 = new ListOfCities(tempcity1, tempCity);
-                    auto city2 = new ListOfCities(tempcity2, tempCity->next);
+                    auto city1 = new ListOfNodes(tempcity1, tempCity);
+                    auto city2 = new ListOfNodes(tempcity2, tempCity->next);
                     auto tempCon = headConnection;
                     while (tempCon->next) {
                         tempCon = tempCon->next;
@@ -513,7 +513,6 @@ void parallelVersionVer2(std::string start, int nth)
             connectionIterator = connectionIterator->next;
         }
 
-
         int tempDist=INT32_MAX;
         auto tempT = tHead;
         std::vector<std::thread*> ThreadVector;
@@ -531,6 +530,91 @@ void parallelVersionVer2(std::string start, int nth)
 
     }while(!finished);
 
+}
+
+void parallelVersionVer3(std::string start, int nth)
+{
+    auto startCity = headCity;
+    bool finished = false;
+    while(startCity)
+    {
+        if(startCity->city==start)
+        {
+            startCity->distance =0;
+            startCity->visited=true;
+            startCity->prevCity = "<---  This is the starting vector";
+            break;
+        }
+        startCity=startCity->next;
+        if(!startCity)
+        {
+            std::cout<<"Incorrect city provided as a start point"<<std::endl;
+            exit(1);
+        }
+    }
+    current = startCity;
+    int noOfThreads =nth;
+
+    prepareParallelization(noOfThreads);
+
+    do {
+        finished=true;
+        auto connectionIterator = headConnection;
+        while (connectionIterator) {
+            if (connectionIterator->city1 == current->city) {
+
+                int road = current->distance + connectionIterator->distance;
+                std::vector<std::thread*> ThreadVector;
+                auto tempT = tHead;
+                std::string cit = connectionIterator->city2;
+                while(tempT)
+                {
+                    auto* myThread = new std::thread(oneThreadVer1, tempT, cit, road);
+                    ThreadVector.push_back(myThread);
+                    tempT=tempT->next;
+                }
+                for(auto & i : ThreadVector)
+                {
+                    i->join();
+                }
+
+            } else if (connectionIterator->city2 == current->city) {
+
+                int road = current->distance + connectionIterator->distance;
+                std::vector<std::thread*> ThreadVector;
+                auto tempT = tHead;
+                std::string cit = connectionIterator->city1;
+                while(tempT)
+                {
+                    auto* myThread = new std::thread(oneThreadVer1, tempT, cit, road);
+                    ThreadVector.push_back(myThread);
+                    tempT=tempT->next;
+                }
+                for(auto & i : ThreadVector)
+                {
+                    i->join();
+                }
+
+            }
+            connectionIterator = connectionIterator->next;
+        }
+
+        int tempDist=INT32_MAX;
+        auto tempT = tHead;
+        std::vector<std::thread*> ThreadVector;
+        while(tempT)
+        {
+            auto* myThread = new std::thread(oneThreadVer2, tempT, std::ref(tempDist), std::ref(finished));
+            ThreadVector.push_back(myThread);
+            tempT=tempT->next;
+        }
+        for(auto & i : ThreadVector)
+        {
+            i->join();
+        }
+        current->visited = true;
+
+    }while(!finished);
 }
 
 void alphabet()
@@ -576,7 +660,7 @@ int main() {
     alphabet();
     auto start = std::chrono::steady_clock::now();
     //linearVersion("Krakow");
-    parallelVersionVer2("Krakow", 4);
+    parallelVersionVer2("Krakow", 3);
     readListOfCities();
     auto end = std::chrono::steady_clock::now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
     auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end

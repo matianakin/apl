@@ -3,7 +3,7 @@
 //
 
 #include "ThreadHead.h"
-#include "ListOfCities.h"
+#include "ListOfNodes.h"
 
 ThreadHead::ThreadHead()
 {
@@ -13,7 +13,7 @@ ThreadHead::ThreadHead()
     this->subEnd=nullptr;
 }
 
-ThreadHead::ThreadHead(ListOfCities *subHead, ListOfCities *subEnd)
+ThreadHead::ThreadHead(ListOfNodes *subHead, ListOfNodes *subEnd)
 {
     this->next=nullptr;
     this->prev=nullptr;
@@ -21,7 +21,7 @@ ThreadHead::ThreadHead(ListOfCities *subHead, ListOfCities *subEnd)
     this->subEnd=subEnd;
 }
 
-ThreadHead::ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities *subEnd)
+ThreadHead::ThreadHead(ThreadHead* curHead, ListOfNodes *subHead, ListOfNodes *subEnd)
 {
     this->next=curHead;
     this->prev=nullptr;
@@ -31,7 +31,7 @@ ThreadHead::ThreadHead(ThreadHead* curHead, ListOfCities *subHead, ListOfCities 
 }
 
 /*
-void ThreadHead::overrider(ListOfCities *subHead, ListOfCities *subEnd)
+void ThreadHead::overrider(ListOfNodes *subHead, ListOfNodes *subEnd)
 {
     this->subHead=subHead;
     this->subEnd=subEnd;
