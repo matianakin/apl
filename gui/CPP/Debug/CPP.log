@@ -1,0 +1,7 @@
+﻿  main.cpp
+D:\GitHub\apl\od Dagerona\CPP\main.cpp(473,5): warning C4190: 'callCPP' has C-linkage specified, but returns UDT 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' which is incompatible with C
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xstring(4905): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  ThreadHead.cpp
+  Generating Code...
+     Creating library D:\GitHub\apl\od Dagerona\Debug\CPP.lib and object D:\GitHub\apl\od Dagerona\Debug\CPP.exp
+  CPP.vcxproj -> D:\GitHub\apl\od Dagerona\Debug\CPP.dll

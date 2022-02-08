@@ -1,0 +1,187 @@
+﻿<Page
+    x:Class="MyGUI.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MyGUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <TextBox x:ConnectionId='1'
+            Height="43"
+            HorizontalAlignment="Left"
+            Margin="30,10,0,0"
+            Name="fileBox"
+            Text="Directory"
+            TextWrapping="Wrap"
+            VerticalAlignment="Top"
+            Width="436" />
+        <Button x:ConnectionId='2'
+            Content="Browse a file"
+            Height="40"
+            HorizontalAlignment="Left"
+                                
+            Margin="500,13,0,0"
+            Name="BrowseButton"
+            RenderTransformOrigin="1.047,0.821"
+            VerticalAlignment="Top"
+            Width="121" />
+        <ScrollViewer x:ConnectionId='3'
+            Height="500"
+            HorizontalAlignment="Right"
+            Margin="0,0,40,0"
+            FontSize="13"
+            Name="Sv2"
+            Width="450">
+            <TextBlock x:ConnectionId='8'
+                Name="CBlock"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                Text="C++ Solution:
+
+                    
+                    
+                    
+                    
+                    city: Bialystok Distance from source: 605 Previous city: Lublin
+
+                    
+                    city: Bydgoszcz Distance from source: 511 Previous city: Lodz
+
+                    
+                    city: Gdansk Distance from source: 686 Previous city: Bydgoszcz
+
+                    
+                    city: Gdynia Distance from source: 716 Previous city: Gdansk
+
+                    
+                    city: Katowice Distance from source: 81 Previous city: Krakow
+
+                    
+                    city: Kielce Distance from source: 241 Previous city: Katowice
+
+                    
+                    city: Koszalin Distance from source: 711 Previous city: Bydgoszcz
+
+                    
+                    city: Krakow Distance from source: 0 Previous city: This is the starting vector
+
+                    
+                    
+                    city: Lodz Distance from source: 291 Previous city: Katowice
+
+                    
+                    city: Lublin Distance from source: 345 Previous city: Rzeszow
+
+                    
+                    city: Olsztyn Distance from source: 661 Previous city: Warszawa
+
+                    
+                    city: Poznan Distance from source: 496 Previous city: Lodz
+
+                    
+                    city: Rzeszow Distance from source: 170 Previous city: Krakow
+
+                    
+                    city: Szczecin Distance from source: 766 Previous city: Poznan
+
+                    
+                    city: Warszawa Distance from source: 431 Previous city: Lodz
+
+                    
+                    city: Wroclaw Distance from source: 511 Previous city: Lodz
+
+                    
+                    time spent: 0.042531 s"
+                TextWrapping="Wrap"
+                Width="472" />
+        </ScrollViewer>
+        <ScrollViewer x:ConnectionId='4'
+            Height="500"
+            HorizontalAlignment="Left"
+            Margin="50,0,0,0"
+            Name="Sv1"
+            Width="450">
+            <TextBlock x:ConnectionId='7'
+                    FontSize="13"
+                Name="AsmBlock"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                Text="Assembler Solution:
+
+                    
+                    
+                    
+                    
+                    city: Bialystok Distance from source: 605 Previous city: Lublin
+
+                    
+                    city: Bydgoszcz Distance from source: 511 Previous city: Lodz
+
+                    
+                    city: Gdansk Distance from source: 686 Previous city: Bydgoszcz
+
+                    
+                    city: Gdynia Distance from source: 716 Previous city: Gdansk
+
+                    
+                    city: Katowice Distance from source: 81 Previous city: Krakow
+
+                    
+                    city: Kielce Distance from source: 241 Previous city: Katowice
+
+                    
+                    city: Koszalin Distance from source: 711 Previous city: Bydgoszcz
+
+                    
+                    city: Krakow Distance from source: 0 Previous city: This is the starting vector
+
+                    
+                    
+                    city: Lodz Distance from source: 291 Previous city: Katowice
+
+                    
+                    city: Lublin Distance from source: 345 Previous city: Rzeszow
+
+                    
+                    city: Olsztyn Distance from source: 661 Previous city: Warszawa
+
+                    
+                    city: Poznan Distance from source: 496 Previous city: Lodz
+
+                    
+                    city: Rzeszow Distance from source: 170 Previous city: Krakow
+
+                    
+                    city: Szczecin Distance from source: 766 Previous city: Poznan
+
+                    
+                    city: Warszawa Distance from source: 431 Previous city: Lodz
+
+                    
+                    city: Wroclaw Distance from source: 511 Previous city: Lodz
+
+                    
+                    time spent: 0.001283 s"
+                TextWrapping="Wrap"
+                Width="468" />
+        </ScrollViewer>
+        <Button x:ConnectionId='5'
+            Content="Run Assembler Solution"
+            Height="50"
+            HorizontalAlignment="Left"
+            Margin="50,0,0,10"
+            Name="AsmButton"
+            VerticalAlignment="Bottom"
+            Width="200" />
+        <Button x:ConnectionId='6'
+            Content="Run C++ Solution"
+            Height="50"
+            HorizontalAlignment="Right"
+            Margin="0,0,290,10"
+            Name="CButton"
+            VerticalAlignment="Bottom"
+            Width="200" />
+    </Grid>
+</Page>
+
