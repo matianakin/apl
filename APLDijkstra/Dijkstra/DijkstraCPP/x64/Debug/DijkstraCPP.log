@@ -1,0 +1,4 @@
+﻿  mydll.cpp
+D:\APLDijkstra\Dijkstra\DijkstraCPP\mydll.cpp(185,101): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+     Creating library D:\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.lib and object D:\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.exp
+  DijkstraCPP.vcxproj -> D:\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.dll
