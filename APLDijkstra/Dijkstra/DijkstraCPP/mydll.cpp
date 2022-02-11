@@ -197,85 +197,6 @@ void readListofConnections()
     }
 }
 
-void linearVersion(char* start)
-{
-
-    auto startCity = headCity;
-    bool finished = false;
-    while (startCity)
-    {
-        if (startCity->city == start)
-        {
-            startCity->distance = 0;
-            startCity->visited = true;
-            startCity->prevCity = "<---  This is the starting vector";
-            break;
-        }
-        startCity = startCity->next;
-        if (!startCity)
-        {
-            std::cout << "Incorrect city provided as a start point" << std::endl;
-            exit(1);
-        }
-    }
-
-    current = startCity;
-
-    do {
-        finished = true;
-        auto connectionIterator = headConnection;
-        while (connectionIterator) {
-            if (connectionIterator->city1 == current->city) {
-                auto analyzedCity = headCity;
-                int road = current->distance + connectionIterator->distance;
-                while (analyzedCity) {
-                    if (analyzedCity->city == connectionIterator->city2) {
-                        break;
-                    }
-                    analyzedCity = analyzedCity->next;
-                }
-                if (!analyzedCity->visited && analyzedCity->distance > road) {
-                    analyzedCity->prevCity = current->city;
-                    //changeDistance(analyzedCity, road);
-                    analyzedCity->distance = road;
-                }
-            }
-            else if (connectionIterator->city2 == current->city)
-            {
-                auto analyzedCity = headCity;
-                int road = current->distance + connectionIterator->distance;
-                while (analyzedCity) {
-                    if (analyzedCity->city == connectionIterator->city1) {
-                        break;
-                    }
-                    analyzedCity = analyzedCity->next;
-                }
-                if (!analyzedCity->visited && analyzedCity->distance > road) {
-                    analyzedCity->prevCity = current->city;
-                    //changeDistance(analyzedCity, road);
-                    analyzedCity->distance = road;
-                }
-            }
-            connectionIterator = connectionIterator->next;
-        }
-
-
-        int tempDist = INT32_MAX;
-        auto tempCity = headCity;
-        while (tempCity)
-        {
-            if (!tempCity->visited && tempCity->distance < tempDist) {
-                current = tempCity;
-                tempDist = tempCity->distance;
-                finished = false;
-            }
-            tempCity = tempCity->next;
-        }
-        current->visited = true;
-
-    } while (!finished);
-}
-
 void prepareParallelization(int threadCount)
 {
     if (threadCount < 1)
@@ -337,31 +258,6 @@ void prepareParallelization(int threadCount)
     }
 }
 
-void oneThreadVer1(ThreadHead* th, std::string citySearch, int road)
-{
-    auto analyzedCity = th->subHead;
-    bool broken = false;
-    while (analyzedCity) {
-        if (th->subEnd && analyzedCity == th->subEnd->next)
-        {
-            break;
-        }
-        if (analyzedCity->city == citySearch) {
-            broken = true;
-            break;
-        }
-        analyzedCity = analyzedCity->next;
-    }
-    if (broken) {
-        if (!analyzedCity->visited && analyzedCity->distance > road) {
-            m.lock();
-            analyzedCity->prevCity = current->city;
-            analyzedCity->distance = road;
-            m.unlock();
-        }
-    }
-}
-
 void oneThreadVer2(ThreadHead* th, int& tempDist, bool& finished)
 {
     auto tempCity = th->subHead;
@@ -380,89 +276,6 @@ void oneThreadVer2(ThreadHead* th, int& tempDist, bool& finished)
         }
         tempCity = tempCity->next;
     }
-}
-
-void parallelVersionVer1(char* start, int nth)
-{
-    auto startCity = headCity;
-    bool finished = false;
-    while (startCity)
-    {
-        if (startCity->city == start)
-        {
-            startCity->distance = 0;
-            startCity->visited = true;
-            startCity->prevCity = "<---  This is the starting vector";
-            break;
-        }
-        startCity = startCity->next;
-        if (!startCity)
-        {
-            std::cout << "Incorrect city provided as a start point" << std::endl;
-            exit(1);
-        }
-    }
-    current = startCity;
-    int noOfThreads = nth;
-
-    prepareParallelization(noOfThreads);
-
-    do {
-        finished = true;
-        auto connectionIterator = headConnection;
-        while (connectionIterator) {
-            if (connectionIterator->city1 == current->city) {
-
-                int road = current->distance + connectionIterator->distance;
-                std::vector<std::thread*> ThreadVector;
-                auto tempT = tHead;
-                std::string cit = connectionIterator->city2;
-                while (tempT)
-                {
-                    auto* myThread = new std::thread(oneThreadVer1, tempT, cit, road);
-                    ThreadVector.push_back(myThread);
-                    tempT = tempT->next;
-                }
-                for (auto& i : ThreadVector)
-                {
-                    i->join();
-                }
-
-            }
-            else if (connectionIterator->city2 == current->city) {
-
-                int road = current->distance + connectionIterator->distance;
-                std::vector<std::thread*> ThreadVector;
-                auto tempT = tHead;
-                std::string cit = connectionIterator->city1;
-                while (tempT)
-                {
-                    auto* myThread = new std::thread(oneThreadVer1, tempT, cit, road);
-                    ThreadVector.push_back(myThread);
-                    tempT = tempT->next;
-                }
-                for (auto& i : ThreadVector)
-                {
-                    i->join();
-                }
-
-            }
-            connectionIterator = connectionIterator->next;
-        }
-
-        int tempDist = INT32_MAX;
-        auto tempCity = headCity;
-        while (tempCity)
-        {
-            if (!tempCity->visited && tempCity->distance < tempDist) {
-                current = tempCity;
-                tempDist = tempCity->distance;
-                finished = false;
-            }
-            tempCity = tempCity->next;
-        }
-        current->visited = true;
-    } while (!finished);
 }
 
 void parallelVersionVer2(char* start, int nth)
@@ -547,92 +360,6 @@ void parallelVersionVer2(char* start, int nth)
 
 }
 
-void parallelVersionVer3(char* start, int nth)
-{
-    auto startCity = headCity;
-    bool finished = false;
-    while (startCity)
-    {
-        if (startCity->city == start)
-        {
-            startCity->distance = 0;
-            startCity->visited = true;
-            startCity->prevCity = "<---  This is the starting vector";
-            break;
-        }
-        startCity = startCity->next;
-        if (!startCity)
-        {
-            std::cout << "Incorrect city provided as a start point" << std::endl;
-            exit(1);
-        }
-    }
-    current = startCity;
-    int noOfThreads = nth;
-
-    prepareParallelization(noOfThreads);
-
-    do {
-        finished = true;
-        auto connectionIterator = headConnection;
-        while (connectionIterator) {
-            if (connectionIterator->city1 == current->city) {
-
-                int road = current->distance + connectionIterator->distance;
-                std::vector<std::thread*> ThreadVector;
-                auto tempT = tHead;
-                std::string cit = connectionIterator->city2;
-                while (tempT)
-                {
-                    auto* myThread = new std::thread(oneThreadVer1, tempT, cit, road);
-                    ThreadVector.push_back(myThread);
-                    tempT = tempT->next;
-                }
-                for (auto& i : ThreadVector)
-                {
-                    i->join();
-                }
-
-            }
-            else if (connectionIterator->city2 == current->city) {
-
-                int road = current->distance + connectionIterator->distance;
-                std::vector<std::thread*> ThreadVector;
-                auto tempT = tHead;
-                std::string cit = connectionIterator->city1;
-                while (tempT)
-                {
-                    auto* myThread = new std::thread(oneThreadVer1, tempT, cit, road);
-                    ThreadVector.push_back(myThread);
-                    tempT = tempT->next;
-                }
-                for (auto& i : ThreadVector)
-                {
-                    i->join();
-                }
-
-            }
-            connectionIterator = connectionIterator->next;
-        }
-
-        int tempDist = INT32_MAX;
-        auto tempT = tHead;
-        std::vector<std::thread*> ThreadVector;
-        while (tempT)
-        {
-            auto* myThread = new std::thread(oneThreadVer2, tempT, std::ref(tempDist), std::ref(finished));
-            ThreadVector.push_back(myThread);
-            tempT = tempT->next;
-        }
-        for (auto& i : ThreadVector)
-        {
-            i->join();
-        }
-        current->visited = true;
-
-    } while (!finished);
-}
-
 void alphabet()
 {
     auto tempCity = headCity;
@@ -668,6 +395,21 @@ void alphabet()
         }
         tempCity = headCity;
     }
+}
+
+bool nodeCheck(char* name)
+{
+    auto tempNode = headCity;
+    bool exists = false;
+    while (tempNode)
+    {
+        if (tempNode->city == name)
+        {
+            exists = true;
+            break;
+        }
+    }
+    return exists;
 }
 
 //int main() {

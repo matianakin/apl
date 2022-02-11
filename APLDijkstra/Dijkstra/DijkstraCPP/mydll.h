@@ -8,14 +8,10 @@ extern "C" __declspec(dllexport) void importFromFile(char* filename);
 
 extern "C" __declspec(dllexport) void alphabet();
 
-extern "C" __declspec(dllexport) void linearVersion(char* start);
-
-extern "C" __declspec(dllexport) void parallelVersionVer1(char* start, int nth);
-
 extern "C" __declspec(dllexport) void parallelVersionVer2(char* start, int nth);
 
-extern "C" __declspec(dllexport) void parallelVersionVer3(char* start, int nth);
-
 extern "C" __declspec(dllexport) void readListOfCities(char* buffer);
+
+extern "C" __declspec(dllexport) bool nodeCheck(char* name);
 
 #endif

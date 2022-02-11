@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.dll</FullPath>
+      <FullPath>D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
