@@ -83,6 +83,9 @@ namespace Dijkstra
         {
             if (dirGiven)
             {
+                CppimportFromFile(new StringBuilder(fileBox.Text));
+
+
                 if (CppnodeCheck(new StringBuilder(StartCityBox.Text)))
                 {
                     StringBuilder cities1 = new StringBuilder(4096);
@@ -161,7 +164,7 @@ namespace Dijkstra
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            openFileDialog.Filter = "Text files (*.txt)|*.txt";
             if (openFileDialog.ShowDialog() == true)
             {
                 string directory = System.IO.Path.GetDirectoryName(openFileDialog.FileName) + "\\" + System.IO.Path.GetFileName(openFileDialog.FileName);
