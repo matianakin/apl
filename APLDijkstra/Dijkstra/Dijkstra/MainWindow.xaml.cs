@@ -63,17 +63,12 @@ namespace Dijkstra
                 }
                 else
                 {
-                    /*Popup codePopup = new Popup();
-                    TextBlock popupText = new TextBlock();
-                    popupText.Text = "Popup Text";
-                    myPopupText.Text = "Popup";
-                    popupText.Background = Brushes.LightBlue;
-                    popupText.Foreground = Brushes.Blue;
-                    codePopup.Child = popupText;*/
-                    myPopupText.Text = "Please choose a starting city that is included in the chosen file";
-                    myPopup.IsOpen = true;
-                    myPopup.IsOpen = false;
+                    MessageBox.Show("Please choose a starting city that is included in the chosen file", "Incorrect city name");
                 }
+            }
+            else
+            {
+                MessageBox.Show("Please choose a .txt file", "No file chosen");
             }
         }
 
@@ -98,16 +93,12 @@ namespace Dijkstra
                 }
                 else
                 {
-                    /*Popup codePopup = new Popup();
-                    TextBlock popupText = new TextBlock();
-                    popupText.Text = "Popup Text";
-                    popupText.Background = Brushes.LightBlue;
-                    popupText.Foreground = Brushes.Blue;
-                    codePopup.Child = popupText;*/
-                    myPopupText.Text = "Please choose a starting city that is included in the chosen file";
-                    myPopup.IsOpen = true;
-                    myPopup.IsOpen=false;
+                    MessageBox.Show("Please choose a starting city that is included in the chosen file", "Incorrect city name");
                 }
+            }
+            else
+            {
+                MessageBox.Show("Please choose a .txt file", "No file chosen");
             }
         }
 

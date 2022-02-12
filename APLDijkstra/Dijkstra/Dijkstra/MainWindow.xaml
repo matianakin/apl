@@ -7,13 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280">
     <Grid>
-        <Popup Name="myPopup" IsEnabled="True" IsOpen="False" Placement="Center">
-            <TextBlock Name="myPopupText" 
-             Background="LightBlue" 
-             Foreground="Blue">
-    Popup Text
-            </TextBlock>
-        </Popup>
         <TextBox
             Height="43"
             HorizontalAlignment="Left"
