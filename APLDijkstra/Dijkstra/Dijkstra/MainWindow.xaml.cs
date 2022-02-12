@@ -29,22 +29,22 @@ namespace Dijkstra
         public static extern void CimportFromFile(StringBuilder filename, StringBuilder start, StringBuilder buffer);
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "importFromFile")]
-        public static extern void CppimportFromFile(StringBuilder filename);
+        public static extern void CPPimportFromFile(StringBuilder filename);
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "alphabet")]
-        public static extern void Cppalphabet();
+        public static extern void CPPalphabet();
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "readListOfCities")]
-        public static extern void CppreadListOfCities(StringBuilder buffer);
+        public static extern void CPPreadListOfCities(StringBuilder buffer);
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "parallelVersionVer2")]
-        public static extern void CppparallelVersionVer2(StringBuilder start, int nth);
+        public static extern void CPPparallelVersionVer2(StringBuilder start, int nth);
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "nodeCheck")]
-        public static extern bool CppnodeCheck(StringBuilder name);
+        public static extern bool CPPnodeCheck(StringBuilder name);
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "checkNoOfThreads")]
-        public static extern bool CppcheckNoOfThreads(int threadCount);
+        public static extern bool CPPcheckNoOfThreads(int threadCount);
 
         bool dirGiven = false;
 
@@ -83,10 +83,10 @@ namespace Dijkstra
         {
             if (dirGiven)
             {
-                CppimportFromFile(new StringBuilder(fileBox.Text));
+                CPPimportFromFile(new StringBuilder(fileBox.Text));
 
 
-                if (CppnodeCheck(new StringBuilder(StartCityBox.Text)))
+                if (CPPnodeCheck(new StringBuilder(StartCityBox.Text)))
                 {
                     StringBuilder cities1 = new StringBuilder(4096);
                     CimportFromFile(new StringBuilder(fileBox.Text), new StringBuilder(StartCityBox.Text), cities1);
@@ -108,9 +108,9 @@ namespace Dijkstra
             if (dirGiven)
             {
 
-                CppimportFromFile(new StringBuilder(fileBox.Text));
+                CPPimportFromFile(new StringBuilder(fileBox.Text));
 
-                if (CppnodeCheck(new StringBuilder(StartCityBox.Text)))
+                if (CPPnodeCheck(new StringBuilder(StartCityBox.Text)))
                 {
                     int numVal = -1;
                     try
@@ -134,14 +134,14 @@ namespace Dijkstra
                     {
                         MessageBox.Show("Maximum supported number of threads is 64", "Too many threads requested");
                     }
-                    else if (CppcheckNoOfThreads(numVal))
+                    else if (CPPcheckNoOfThreads(numVal))
                     {
-                        Cppalphabet();
+                        CPPalphabet();
 
-                        CppparallelVersionVer2(new StringBuilder(StartCityBox.Text), numVal);
+                        CPPparallelVersionVer2(new StringBuilder(StartCityBox.Text), numVal);
 
                         StringBuilder cities2 = new StringBuilder(4096);
-                        CppreadListOfCities(cities2);
+                        CPPreadListOfCities(cities2);
 
                         CBlock.Text = cities2.ToString();
                     }

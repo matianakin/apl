@@ -72,7 +72,7 @@ void readListOfCities(struct ListOfCities** headCity, char* buffer)
     while (tempCity)
     {
         char tmp[32];
-        sprintf(buffer + offset, "City: %s, Distance from source: %i, Previous city: %s\n", tempCity->city, tempCity->distance, tempCity->prevCity);
+        sprintf(buffer + offset, "Node: %s, Distance from source: %i, Previous node: %s\n", tempCity->city, tempCity->distance, tempCity->prevCity);
         _itoa(tempCity->distance, tmp, 10);
         offset += strlen(tempCity->city) + strlen(tmp) + strlen(tempCity->prevCity) + 48;
         tempCity = tempCity->next;

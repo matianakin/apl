@@ -180,7 +180,7 @@ void readListOfCities(char* buffer)
     while (tempCity)
     {
         char tmp[32];
-        sprintf(buffer + offset, "City: %s, Distance from source: %i, Previous city: %s\n", tempCity->city.c_str(), tempCity->distance, tempCity->prevCity.c_str());
+        sprintf(buffer + offset, "Node: %s, Distance from source: %i, Previous node: %s\n", tempCity->city.c_str(), tempCity->distance, tempCity->prevCity.c_str());
         _itoa(tempCity->distance, tmp, 10);
         offset += strlen(tempCity->city.c_str()) + strlen(tmp) + strlen(tempCity->prevCity.c_str()) + 48;
         tempCity = tempCity->next;
@@ -288,7 +288,7 @@ void parallelVersionVer2(char* start, int nth)
         {
             startCity->distance = 0;
             startCity->visited = true;
-            startCity->prevCity = "<---  This is the starting vector";
+            startCity->prevCity = "This is the starting node";
             break;
         }
         startCity = startCity->next;

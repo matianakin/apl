@@ -8,61 +8,82 @@
         Title="MainWindow" Height="720" Width="1280">
     <Grid>
         <TextBox
-            Height="43"
+            Height="50"
             HorizontalAlignment="Left"
-            Margin="30,10,0,0"
+            Margin="50,10,0,0"
             Name="fileBox"
             Text="Directory"
             TextWrapping="Wrap"
             VerticalAlignment="Top"
             IsReadOnly="True"
-            Width="436" />
+            Width="340" />
         <Button
             Content="Browse"
-            Height="40"
+            Height="50"
             HorizontalAlignment="Left"
-            Margin="500,13,0,0"
+            Margin="400,10,0,0"
             Name="BrowseButton"
             RenderTransformOrigin="1.047,0.821"
             VerticalAlignment="Top"
-            Width="121" Click="BrowseButton_Click" />
+            Width="150" Click="BrowseButton_Click" />
         <TextBox
-            Height="43"
+            Height="50"
             HorizontalAlignment="Right"
-            Margin="0,13,67,0"
+            Margin="0,10,50,0"
             Name="StartCityBox"
             Text="Starting city"
             TextWrapping="Wrap"
             VerticalAlignment="Top"
-            Width="436" />
+            Width="500" />
         <ScrollViewer
             Height="500"
             HorizontalAlignment="Right"
-            Margin="0,0,40,0"
+            VerticalAlignment="Top"
+            Margin="0,85,50,0"
             FontSize="13"
             Name="Sv2"
-            Width="450">
+            Width="500">
             <TextBlock
                 Name="CBlock"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 Text=""
                 TextWrapping="Wrap"
-                Width="472" />
+                Width="500" />
         </ScrollViewer>
         <ScrollViewer
             Height="500"
             HorizontalAlignment="Left"
-            Margin="50,0,0,0"
+            VerticalAlignment="Top"
+            Margin="50,85,0,0"
             Name="Sv1"
-            Width="450">
+            Width="500">
             <TextBlock
-                    FontSize="13"
+                FontSize="13"
                 Name="AsmBlock"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 Text=""
                 TextWrapping="Wrap"
-                Width="468" />
+                Width="500" />
         </ScrollViewer>
+        <TextBox
+            HorizontalAlignment="Left"
+            Margin="50,0,0,70"
+            VerticalAlignment="Bottom"
+            Text="Assembly time:"
+            Height="25"
+            Width="117.5"
+            IsReadOnly="True"
+            />
+        <TextBox
+            HorizontalAlignment="Left"
+            Margin="177.5,0,0,70"
+            VerticalAlignment="Bottom"
+            Text="not executed"
+            Name="AsmTime"
+            Height="25"
+            Width="117.5"
+            IsReadOnly="True"
+            />
         <Button
             Content="Run Assembler Solution"
             Height="50"
@@ -70,36 +91,55 @@
             Margin="50,0,0,10"
             Name="AsmButton"
             VerticalAlignment="Bottom"
-            Width="200" Click="AsmButton_Click" />
+            Width="245" Click="AsmButton_Click" />
         <Button
             Content="Run C++ Solution"
             Height="50"
             HorizontalAlignment="Right"
-            Margin="0,0,290,10"
+            Margin="0,0,305,10"
             Name="CppButton"
             VerticalAlignment="Bottom"
-            Width="200" Click="CppButton_Click" />
+            Width="245" Click="CppButton_Click" />
         <TextBox
             Height="50"
             HorizontalAlignment="Right"
-            Margin="10,10,10,10"
+            Margin="0,0,50,10"
             Name="Threadbox"
             Text="2"
             TextWrapping="Wrap"
             VerticalAlignment="Bottom"
-            Width="130" InputScope="Digits"
+            Width="117.5" InputScope="Digits"
             PreviewTextInput="NumberValidationTextBox"
             />
         <TextBox
             Height="50"
             HorizontalAlignment="Right"
-            Margin="10,10,150,10"
+            Margin="0,0,177.5,10"
             Name="Thread"
             IsReadOnly="True"
             Text="Number of Threads"
             TextWrapping="Wrap"
             VerticalAlignment="Bottom"
-            Width="130"
+            Width="117.5"
+            />
+        <TextBox
+            HorizontalAlignment="Right"
+            Margin="0,0,432.5,70"
+            VerticalAlignment="Bottom"
+            Text="C++ time:"
+            Height="25"
+            Width="117.5"
+            IsReadOnly="True"
+            />
+        <TextBox
+            HorizontalAlignment="Right"
+            Margin="0,0,305,70"
+            VerticalAlignment="Bottom"
+            Text="not executed"
+            Name="CppTime"
+            Height="25"
+            Width="117.5"
+            IsReadOnly="True"
             />
 
     </Grid>
