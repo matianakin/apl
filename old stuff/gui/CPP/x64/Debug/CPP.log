@@ -1,8 +1,0 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (CPP.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  main.cpp
-D:\GitHub\apl\gui\CPP\main.cpp(477,5): warning C4190: 'callCPP' has C-linkage specified, but returns UDT 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' which is incompatible with C
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xstring(4905): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
-  ThreadHead.cpp
-  Generating Code...
-     Creating library D:\GitHub\apl\gui\x64\Debug\CPPVersion.lib and object D:\GitHub\apl\gui\x64\Debug\CPPVersion.exp
-  CPP.vcxproj -> D:\GitHub\apl\gui\x64\Debug\CPPVersion.dll

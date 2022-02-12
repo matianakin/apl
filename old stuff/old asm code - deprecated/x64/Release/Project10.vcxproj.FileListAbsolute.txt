@@ -1,2 +1,0 @@
-C:\Users\matia\source\repos\Project10\x64\Release\Project10.exe
-D:\GitHub\apl\projekt\x64\Release\Project.exe

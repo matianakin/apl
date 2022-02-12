@@ -1,1 +1,0 @@
-D:\GitHub\apl\gui\MORTIK_ALKOHOLIK\GUI.csproj;x64

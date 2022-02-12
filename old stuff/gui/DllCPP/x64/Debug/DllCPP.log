@@ -1,5 +1,0 @@
-﻿  functions.cpp
-D:\GitHub\apl\gui\DllCPP\functions.cpp(5,1): warning C4273: 'answer': inconsistent dll linkage
-D:\GitHub\apl\gui\DllCPP\functions.h(12,30): message : see previous definition of 'answer'
-     Creating library D:\GitHub\apl\gui\x64\Debug\DllCPP.lib and object D:\GitHub\apl\gui\x64\Debug\DllCPP.exp
-  DllCPP.vcxproj -> D:\GitHub\apl\gui\x64\Debug\DllCPP.dll

@@ -1,5 +1,0 @@
-﻿  functions.cpp
-D:\aplwpf\new\WpfApp\DllCPP\functions.cpp(5,1): warning C4273: 'answer': inconsistent dll linkage
-D:\aplwpf\new\WpfApp\DllCPP\functions.h(12,30): message : see previous definition of 'answer'
-     Creating library D:\aplwpf\new\WpfApp\x64\Debug\DllCPP.lib and object D:\aplwpf\new\WpfApp\x64\Debug\DllCPP.exp
-  DllCPP.vcxproj -> D:\aplwpf\new\WpfApp\x64\Debug\DllCPP.dll
