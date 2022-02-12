@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,9 +41,12 @@ namespace Dijkstra
         public static extern void CppparallelVersionVer2(StringBuilder start, int nth);
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "nodeCheck")]
-        public static extern bool nodeCheck(StringBuilder name);
+        public static extern bool CppnodeCheck(StringBuilder name);
 
-        bool dirGiven=false;
+        [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "checkNoOfThreads")]
+        public static extern bool CppcheckNoOfThreads(int threadCount);
+
+        bool dirGiven = false;
 
         public MainWindow()
         {
@@ -55,7 +59,7 @@ namespace Dijkstra
         {
             if (dirGiven)
             {
-                if (nodeCheck(new StringBuilder(StartCityBox.Text)))
+                if (CppnodeCheck(new StringBuilder(StartCityBox.Text)))
                 {
                     StringBuilder cities1 = new StringBuilder(4096);
                     CimportFromFile(new StringBuilder(fileBox.Text), new StringBuilder(StartCityBox.Text), cities1);
@@ -72,24 +76,52 @@ namespace Dijkstra
             }
         }
 
-        private void CButton_Click(object sender, RoutedEventArgs e)
+        private void CppButton_Click(object sender, RoutedEventArgs e)
         {
             if (dirGiven)
             {
 
                 CppimportFromFile(new StringBuilder(fileBox.Text));
 
-                if (nodeCheck(new StringBuilder(StartCityBox.Text)))
+                if (CppnodeCheck(new StringBuilder(StartCityBox.Text)))
                 {
+                    int numVal = -1;
+                    try
+                    {
+                        numVal = Int32.Parse(Threadbox.Text);
+                        Console.WriteLine(numVal);
+                    }
+                    catch (FormatException x)
+                    {
+                        Console.WriteLine(x.Message);
+                    }
+                    if (numVal == -1)
+                    {
+                        MessageBox.Show("Please provide desired number of threads", "Error reading no. of Threads");
+                    }
+                    else if (numVal < 1)
+                    {
+                        MessageBox.Show("Minimal number of threads is 1", "Incorrect no of Threads");
+                    }
+                    else if (numVal>64)
+                    {
+                        MessageBox.Show("Maximum supported number of threads is 64", "Too many threads requested");
+                    }
+                    else if (CppcheckNoOfThreads(numVal))
+                    {
+                        Cppalphabet();
 
-                    Cppalphabet();
+                        CppparallelVersionVer2(new StringBuilder(StartCityBox.Text), numVal);
 
-                    CppparallelVersionVer2(new StringBuilder(StartCityBox.Text), 3);
+                        StringBuilder cities2 = new StringBuilder(4096);
+                        CppreadListOfCities(cities2);
 
-                    StringBuilder cities2 = new StringBuilder(4096);
-                    CppreadListOfCities(cities2);
-
-                    CBlock.Text = cities2.ToString();
+                        CBlock.Text = cities2.ToString();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Too many threads requested. Number of threads cannot exceed number of vertices.", "Too many threads requested");
+                    }
                 }
                 else
                 {
@@ -113,5 +145,12 @@ namespace Dijkstra
             }
 
         }
+
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+
+        }
     }
-}
+ }

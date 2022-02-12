@@ -76,10 +76,32 @@
             Height="50"
             HorizontalAlignment="Right"
             Margin="0,0,290,10"
-            Name="CButton"
+            Name="CppButton"
             VerticalAlignment="Bottom"
-            Width="200" Click="CButton_Click" />
-    
+            Width="200" Click="CppButton_Click" />
+        <TextBox
+            Height="50"
+            HorizontalAlignment="Right"
+            Margin="10,10,10,10"
+            Name="Threadbox"
+            Text="2"
+            TextWrapping="Wrap"
+            VerticalAlignment="Bottom"
+            Width="130" InputScope="Digits"
+            PreviewTextInput="NumberValidationTextBox"
+            />
+        <TextBox
+            Height="50"
+            HorizontalAlignment="Right"
+            Margin="10,10,150,10"
+            Name="Thread"
+            IsReadOnly="True"
+            Text="Number of Threads"
+            TextWrapping="Wrap"
+            VerticalAlignment="Bottom"
+            Width="130"
+            />
+
     </Grid>
     
 </Window>

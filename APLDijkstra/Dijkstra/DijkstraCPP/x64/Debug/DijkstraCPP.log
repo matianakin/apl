@@ -1,3 +1,4 @@
-﻿  LINK : D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.dll not found or not built by the last incremental link; performing full link
+﻿  mydll.cpp
+D:\GitHub\apl\APLDijkstra\Dijkstra\DijkstraCPP\mydll.cpp(185,101): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
      Creating library D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.lib and object D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.exp
   DijkstraCPP.vcxproj -> D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Debug\DijkstraCPP.dll

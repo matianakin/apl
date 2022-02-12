@@ -413,6 +413,30 @@ bool nodeCheck(char* name)
     return exists;
 }
 
+bool checkNoOfThreads(int threadCount)
+{
+    if (threadCount < 1)
+    {
+        return false;
+    }
+    auto tempCity = headCity;
+    int i = 0;
+    while (tempCity)
+    {
+        i++;
+        tempCity = tempCity->next;
+    }
+    tempCity = headCity;
+    if (threadCount > i)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
 //int main() {
 //
 //    importFromFile("D:/GitHub/apl/cpp/test.txt");

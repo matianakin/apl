@@ -14,4 +14,6 @@ extern "C" __declspec(dllexport) void readListOfCities(char* buffer);
 
 extern "C" __declspec(dllexport) bool nodeCheck(char* name);
 
+extern "C" __declspec(dllexport) bool checkNoOfThreads(int threadCount);
+
 #endif
