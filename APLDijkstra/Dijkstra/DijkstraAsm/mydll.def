@@ -1,3 +1,0 @@
-LIBRARY DIJKSTRAASM
-EXPORTS inLoop
-EXPORTS linearVersion
