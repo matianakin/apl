@@ -1,7 +1,7 @@
 ﻿  pch.cpp
   dllmain.cpp
   mydll.cpp
-D:\APLDijkstra\Dijkstra\DijkstraC\mydll.cpp(77,85): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+D:\GitHub\apl\APLDijkstra\Dijkstra\DijkstraC\mydll.cpp(77,85): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
   Generating Code...
-     Creating library D:\APLDijkstra\Dijkstra\x64\Debug\DijkstraC.lib and object D:\APLDijkstra\Dijkstra\x64\Debug\DijkstraC.exp
-  DijkstraC.vcxproj -> D:\APLDijkstra\Dijkstra\x64\Debug\DijkstraC.dll
+     Creating library D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Debug\DijkstraC.lib and object D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Debug\DijkstraC.exp
+  DijkstraC.vcxproj -> D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Debug\DijkstraC.dll

@@ -408,6 +408,7 @@ bool nodeCheck(char* name)
             exists = true;
             break;
         }
+        tempNode = tempNode->next;
     }
     return exists;
 }

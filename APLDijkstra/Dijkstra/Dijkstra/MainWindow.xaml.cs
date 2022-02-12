@@ -55,7 +55,7 @@ namespace Dijkstra
         {
             if (dirGiven)
             {
-                if (nodeCheck(new StringBuilder(fileBox.Text)))
+                if (nodeCheck(new StringBuilder(StartCityBox.Text)))
                 {
                     StringBuilder cities1 = new StringBuilder(4096);
                     CimportFromFile(new StringBuilder(fileBox.Text), new StringBuilder(StartCityBox.Text), cities1);
@@ -72,7 +72,6 @@ namespace Dijkstra
                     codePopup.Child = popupText;*/
                     myPopupText.Text = "Please choose a starting city that is included in the chosen file";
                     myPopup.IsOpen = true;
-                    System.Threading.Thread.Sleep(50);
                     myPopup.IsOpen = false;
                 }
             }
@@ -85,7 +84,7 @@ namespace Dijkstra
 
                 CppimportFromFile(new StringBuilder(fileBox.Text));
 
-                if (nodeCheck(new StringBuilder(fileBox.Text)))
+                if (nodeCheck(new StringBuilder(StartCityBox.Text)))
                 {
 
                     Cppalphabet();
@@ -107,7 +106,6 @@ namespace Dijkstra
                     codePopup.Child = popupText;*/
                     myPopupText.Text = "Please choose a starting city that is included in the chosen file";
                     myPopup.IsOpen = true;
-                    System.Threading.Thread.Sleep(50);
                     myPopup.IsOpen=false;
                 }
             }
@@ -118,7 +116,11 @@ namespace Dijkstra
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
-                fileBox.Text = System.IO.Path.GetDirectoryName(openFileDialog.FileName)+"\\"+System.IO.Path.GetFileName(openFileDialog.FileName);
+            {
+                fileBox.Text = System.IO.Path.GetDirectoryName(openFileDialog.FileName) + "\\" + System.IO.Path.GetFileName(openFileDialog.FileName);
+                dirGiven = true;
+            }
+
         }
     }
 }
