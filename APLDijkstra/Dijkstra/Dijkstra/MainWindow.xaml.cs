@@ -54,6 +54,30 @@ namespace Dijkstra
 
         }
 
+        private bool CheckFile(string filename)
+        {
+            var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            StreamReader reader = new StreamReader(fileStream, Encoding.UTF8);
+            string[] words = reader.ReadToEnd().Split(new Char[] { ',', '\\', '\n', ' ', '.', '-' },
+                                 StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (i % 3==2)
+                {
+                    try
+                    {
+                        int numVal = Int32.Parse(words[i]);
+                        Console.WriteLine(numVal);
+                    }
+                    catch (FormatException x)
+                    {
+                        Console.WriteLine(x.Message);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
         private void AsmButton_Click(object sender, RoutedEventArgs e)
         {
@@ -140,8 +164,17 @@ namespace Dijkstra
             openFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
-                fileBox.Text = System.IO.Path.GetDirectoryName(openFileDialog.FileName) + "\\" + System.IO.Path.GetFileName(openFileDialog.FileName);
-                dirGiven = true;
+                string directory = System.IO.Path.GetDirectoryName(openFileDialog.FileName) + "\\" + System.IO.Path.GetFileName(openFileDialog.FileName);
+                if (CheckFile(directory))
+                {
+                    fileBox.Text = directory;
+                    dirGiven = true;
+                }
+                else
+                {
+                    MessageBox.Show("Incorrect .txt file selected \nPlease select another file", "Incorrect file seelected");
+
+                }
             }
 
         }
