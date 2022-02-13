@@ -31,7 +31,7 @@
             HorizontalAlignment="Right"
             Margin="0,10,50,0"
             Name="StartCityBox"
-            Text="Starting city"
+            Text="Starting node"
             TextWrapping="Wrap"
             VerticalAlignment="Top"
             Width="500" />

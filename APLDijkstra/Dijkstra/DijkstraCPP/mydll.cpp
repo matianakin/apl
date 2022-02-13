@@ -288,7 +288,7 @@ void parallelVersionVer2(char* start, int nth)
         {
             startCity->distance = 0;
             startCity->visited = true;
-            startCity->prevCity = "This is the starting node";
+            startCity->prevCity = "STARTING NODE";
             break;
         }
         startCity = startCity->next;

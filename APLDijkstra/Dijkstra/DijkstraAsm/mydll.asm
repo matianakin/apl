@@ -24,7 +24,7 @@ extern exit: PROC
 
 extern printf: PROC
 
-thisis db "This is the starting node",0
+thisis db "STARTING NODE",0
 incorrect db "Incorrect city provided as a start point",0
 sformat db "%s",0
 

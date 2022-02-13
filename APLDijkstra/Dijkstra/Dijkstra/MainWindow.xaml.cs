@@ -94,7 +94,7 @@ namespace Dijkstra
                 }
                 else
                 {
-                    MessageBox.Show("Please choose a starting city that is included in the chosen file", "Incorrect city name");
+                    MessageBox.Show("Please choose a starting node that is included in the chosen file", "Incorrect node name");
                 }
             }
             else
@@ -152,7 +152,7 @@ namespace Dijkstra
                 }
                 else
                 {
-                    MessageBox.Show("Please choose a starting city that is included in the chosen file", "Incorrect city name");
+                    MessageBox.Show("Please choose a starting node that is included in the chosen file", "Incorrect node name");
                 }
             }
             else
@@ -175,7 +175,7 @@ namespace Dijkstra
                 }
                 else
                 {
-                    MessageBox.Show("Incorrect .txt file selected \nPlease select another file", "Incorrect file seelected");
+                    MessageBox.Show("Incorrect .txt file selected \nPlease select another file", "Incorrect file selected");
 
                 }
             }
