@@ -44,7 +44,7 @@
             Name="Sv2"
             Width="500">
             <TextBlock
-                Name="CBlock"
+                Name="CppBlock"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 Text=""
                 TextWrapping="Wrap"

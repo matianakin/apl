@@ -26,7 +26,7 @@ namespace Dijkstra
     public partial class MainWindow : Window
     {
         [DllImport("../../../../x64/Debug/DijkstraC.dll", EntryPoint = "importFromFile")]
-        public static extern void CimportFromFile(StringBuilder filename, StringBuilder start, StringBuilder buffer);
+        public static extern void CimportFromFile(StringBuilder filename, StringBuilder start, StringBuilder buffer, StringBuilder time);
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "importFromFile")]
         public static extern void CPPimportFromFile(StringBuilder filename);
@@ -45,6 +45,9 @@ namespace Dijkstra
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "checkNoOfThreads")]
         public static extern bool CPPcheckNoOfThreads(int threadCount);
+
+        [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "callCPP")]
+        public static extern void callCPP(StringBuilder filename, StringBuilder start, int nth, StringBuilder buffer, StringBuilder time);
 
         bool dirGiven = false;
 
@@ -89,8 +92,10 @@ namespace Dijkstra
                 if (CPPnodeCheck(new StringBuilder(StartNodeBox.Text)))
                 {
                     StringBuilder nodes1 = new StringBuilder(4096);
-                    CimportFromFile(new StringBuilder(fileBox.Text), new StringBuilder(StartNodeBox.Text), nodes1);
+                    StringBuilder time = new StringBuilder(4096);
+                    CimportFromFile(new StringBuilder(fileBox.Text), new StringBuilder(StartNodeBox.Text), nodes1, time);
                     AsmBlock.Text = nodes1.ToString();
+                    AsmTime.Text=time.ToString();
                 }
                 else
                 {
@@ -136,14 +141,18 @@ namespace Dijkstra
                     }
                     else if (CPPcheckNoOfThreads(numVal))
                     {
-                        CPPalphabet();
+                        //CPPalphabet();
 
-                        CPPparallelVersionVer2(new StringBuilder(StartNodeBox.Text), numVal);
+                        //CPPparallelVersionVer2(new StringBuilder(StartNodeBox.Text), numVal);
 
                         StringBuilder nodes2 = new StringBuilder(4096);
-                        CPPreadListOfNodes(nodes2);
+                        StringBuilder time = new StringBuilder(4096);
+                        //CPPreadListOfNodes(nodes2);
+                        callCPP(new StringBuilder(fileBox.Text), new StringBuilder(StartNodeBox.Text), numVal, nodes2, time);
 
-                        CBlock.Text = nodes2.ToString();
+                        CppBlock.Text = nodes2.ToString();
+                        CppTime.Text = time.ToString();
+
                     }
                     else
                     {

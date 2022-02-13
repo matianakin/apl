@@ -437,6 +437,20 @@ bool checkNoOfThreads(int threadCount)
     }
 }
 
+void callCPP(char* filename, char* start, int nth, char* buffer, char* time)
+{
+    importFromFile(filename);
+    alphabet();
+    auto begin = std::chrono::steady_clock::now();
+    //linearVersion("Krakow");
+    parallelVersionVer2(start, nth);
+    auto end = std::chrono::steady_clock::now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
+    auto time_span = static_cast<std::chrono::duration<double>>(end - begin);   // measure time span between start & end
+    std::string s = std::to_string(time_span.count())+" s";
+    strcpy(time, s.c_str());
+    readListOfNodes(buffer);
+}
+
 //int main() {
 //
 //    importFromFile("D:/GitHub/apl/cpp/test.txt");

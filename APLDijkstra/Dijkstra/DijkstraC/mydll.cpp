@@ -6,6 +6,8 @@
 #include "stdbool.h"
 #include "time.h"
 #include "mydll.h"
+#include <chrono>
+#include <string>
 
 struct ListOfNodes {
     struct ListOfNodes* next;
@@ -223,7 +225,7 @@ void checkForDuplicateConnections(struct ListOfConnections** headConnection)
 //    } while (!finished);
 //}
 
-void importFromFile(char* filename, char* start, char* buffer)
+void importFromFile(char* filename, char* start, char* buffer, char*time)
 {
     struct ListOfNodes* headNode = NULL;
     struct ListOfConnections* headConnection = NULL;
@@ -312,6 +314,11 @@ void importFromFile(char* filename, char* start, char* buffer)
     fclose(file);
 
     alphabet(&headNode);
+    auto begin = std::chrono::steady_clock::now();
     linearVersion(&headNode, &headConnection, start);
+    auto end = std::chrono::steady_clock::now();
+    auto time_span = static_cast<std::chrono::duration<double>>(end - begin);   // measure time span between start & end
+    std::string s = std::to_string(time_span.count()) + " s";
+    strcpy(time, s.c_str());
     readListOfNodes(&headNode, buffer);
 }

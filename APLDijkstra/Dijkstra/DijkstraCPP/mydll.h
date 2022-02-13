@@ -16,4 +16,6 @@ extern "C" __declspec(dllexport) bool nodeCheck(char* name);
 
 extern "C" __declspec(dllexport) bool checkNoOfThreads(int threadCount);
 
+extern "C" __declspec(dllexport) void callCPP(char* filename, char* start, int nth, char* buffer, char* time);
+
 #endif
