@@ -232,8 +232,8 @@ void importFromFile(char* filename, char* start, char* buffer, char*time)
     FILE* file = fopen(filename, "r");
     if (file)
     {
-        char tempnode1[15];
-        char tempnode2[15];
+        char tempnode1[155];
+        char tempnode2[155];
         int tempdistance = 0;
         int j = 0;
         while (fscanf(file, "%s %s %i", tempnode1, tempnode2, &tempdistance) > 0) // NOLINT(cert-err34-c)

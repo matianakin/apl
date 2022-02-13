@@ -91,7 +91,7 @@ namespace Dijkstra
 
                 if (CPPnodeCheck(new StringBuilder(StartNodeBox.Text)))
                 {
-                    StringBuilder nodes1 = new StringBuilder(4096);
+                    StringBuilder nodes1 = new StringBuilder(1000000);
                     StringBuilder time = new StringBuilder(4096);
                     CimportFromFile(new StringBuilder(fileBox.Text), new StringBuilder(StartNodeBox.Text), nodes1, time);
                     AsmBlock.Text = nodes1.ToString();
@@ -141,13 +141,8 @@ namespace Dijkstra
                     }
                     else if (CPPcheckNoOfThreads(numVal))
                     {
-                        //CPPalphabet();
-
-                        //CPPparallelVersionVer2(new StringBuilder(StartNodeBox.Text), numVal);
-
-                        StringBuilder nodes2 = new StringBuilder(4096);
+                        StringBuilder nodes2 = new StringBuilder(1000000);
                         StringBuilder time = new StringBuilder(4096);
-                        //CPPreadListOfNodes(nodes2);
                         callCPP(new StringBuilder(fileBox.Text), new StringBuilder(StartNodeBox.Text), numVal, nodes2, time);
 
                         CppBlock.Text = nodes2.ToString();
