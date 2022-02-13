@@ -34,8 +34,8 @@ namespace Dijkstra
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "alphabet")]
         public static extern void CPPalphabet();
 
-        [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "readListOfCities")]
-        public static extern void CPPreadListOfCities(StringBuilder buffer);
+        [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "readListOfNodes")]
+        public static extern void CPPreadListOfNodes(StringBuilder buffer);
 
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "parallelVersionVer2")]
         public static extern void CPPparallelVersionVer2(StringBuilder start, int nth);
@@ -86,11 +86,11 @@ namespace Dijkstra
                 CPPimportFromFile(new StringBuilder(fileBox.Text));
 
 
-                if (CPPnodeCheck(new StringBuilder(StartCityBox.Text)))
+                if (CPPnodeCheck(new StringBuilder(StartNodeBox.Text)))
                 {
-                    StringBuilder cities1 = new StringBuilder(4096);
-                    CimportFromFile(new StringBuilder(fileBox.Text), new StringBuilder(StartCityBox.Text), cities1);
-                    AsmBlock.Text = cities1.ToString();
+                    StringBuilder nodes1 = new StringBuilder(4096);
+                    CimportFromFile(new StringBuilder(fileBox.Text), new StringBuilder(StartNodeBox.Text), nodes1);
+                    AsmBlock.Text = nodes1.ToString();
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace Dijkstra
 
                 CPPimportFromFile(new StringBuilder(fileBox.Text));
 
-                if (CPPnodeCheck(new StringBuilder(StartCityBox.Text)))
+                if (CPPnodeCheck(new StringBuilder(StartNodeBox.Text)))
                 {
                     int numVal = -1;
                     try
@@ -138,12 +138,12 @@ namespace Dijkstra
                     {
                         CPPalphabet();
 
-                        CPPparallelVersionVer2(new StringBuilder(StartCityBox.Text), numVal);
+                        CPPparallelVersionVer2(new StringBuilder(StartNodeBox.Text), numVal);
 
-                        StringBuilder cities2 = new StringBuilder(4096);
-                        CPPreadListOfCities(cities2);
+                        StringBuilder nodes2 = new StringBuilder(4096);
+                        CPPreadListOfNodes(nodes2);
 
-                        CBlock.Text = cities2.ToString();
+                        CBlock.Text = nodes2.ToString();
                     }
                     else
                     {

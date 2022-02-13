@@ -6,15 +6,15 @@ class ListOfConnections {
 public:
     ListOfConnections* next;
     ListOfConnections* prev;
-    std::string city1;
-    std::string city2;
+    std::string node1;
+    std::string node2;
     int distance;
 
     ListOfConnections();
 
-    ListOfConnections(std::string city1, std::string city2, int distance);
+    ListOfConnections(std::string node1, std::string node2, int distance);
 
-    ListOfConnections(std::string city1, std::string city2, int distance, ListOfConnections* current);
+    ListOfConnections(std::string node1, std::string node2, int distance, ListOfConnections* current);
 };
 
 #endif //CPP_LISTOFCONNECTIONS_H

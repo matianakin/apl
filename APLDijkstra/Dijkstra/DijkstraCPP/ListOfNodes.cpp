@@ -8,17 +8,17 @@ ListOfNodes::ListOfNodes()
     next = nullptr;
     prev = nullptr;
     visited = false;
-    prevCity = "";
+    prevNode = "";
 }
 
 ListOfNodes::ListOfNodes(std::string name, int distance)
 {
     next = nullptr;
     prev = nullptr;
-    this->city = std::move(name);
+    this->node = std::move(name);
     this->distance = distance;
     visited = false;
-    prevCity = "";
+    prevNode = "";
 }
 
 ListOfNodes::ListOfNodes(std::string name, int distance, ListOfNodes* current)
@@ -26,29 +26,29 @@ ListOfNodes::ListOfNodes(std::string name, int distance, ListOfNodes* current)
     next = nullptr;
     prev = current;
     current->next = this;
-    this->city = std::move(name);
+    this->node = std::move(name);
     this->distance = distance;
     visited = false;
-    prevCity = "";
+    prevNode = "";
 }
 
-ListOfNodes::ListOfNodes(std::string city)
+ListOfNodes::ListOfNodes(std::string node)
 {
     next = nullptr;
     prev = nullptr;
-    this->city = std::move(city);
+    this->node = std::move(node);
     this->distance = INT32_MAX;
     visited = false;
-    prevCity = "";
+    prevNode = "";
 }
 
-ListOfNodes::ListOfNodes(std::string city, ListOfNodes* current)
+ListOfNodes::ListOfNodes(std::string node, ListOfNodes* current)
 {
     next = nullptr;
     prev = current;
     current->next = this;
-    this->city = std::move(city);
+    this->node = std::move(node);
     this->distance = INT32_MAX;
     visited = false;
-    prevCity = "";
+    prevNode = "";
 }

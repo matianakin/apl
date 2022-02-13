@@ -3,7 +3,7 @@
 
 extern "C" __declspec(dllexport) void importFromFile(char* filename, char* start, char* buffer);
 
-//extern "C" __declspec(dllexport) void readListOfCities(char* buffer);
+//extern "C" __declspec(dllexport) void readListOfNodes(char* buffer);
 //
 //extern "C" __declspec(dllexport) void alphabet();
 //

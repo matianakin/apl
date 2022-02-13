@@ -14,26 +14,26 @@
 
 
 
-ListOfNodes* headCity = nullptr;
+ListOfNodes* headNode = nullptr;
 ListOfConnections* headConnection = nullptr;
 ThreadHead* tHead = nullptr;
 std::mutex m;
 ListOfNodes* current = nullptr;
 
-void checkForDuplicateCities()
+void checkForDuplicateNodes()
 {
-    auto temp = headCity;
+    auto temp = headNode;
     ListOfNodes* temp2 = nullptr;
-    if (headCity)
+    if (headNode)
     {
-        temp2 = headCity->next;
+        temp2 = headNode->next;
     }
     while (temp)
     {
         bool changed = false;
         while (temp2) {
 
-            if (temp->city == temp2->city) {
+            if (temp->node == temp2->node) {
                 auto temp3 = temp2;
                 temp2 = temp3->next;
                 if (temp2) {
@@ -71,7 +71,7 @@ void checkForDuplicateConnections()
         bool changed = false;
         while (temp2) {
 
-            if ((temp->city1 == temp2->city1 && temp->city2 == temp2->city2) || (temp->city1 == temp2->city2 && temp->city2 == temp2->city1)) {
+            if ((temp->node1 == temp2->node1 && temp->node2 == temp2->node2) || (temp->node1 == temp2->node2 && temp->node2 == temp2->node1)) {
                 auto temp3 = temp2;
                 temp2 = temp3->next;
                 temp3->prev->next = temp2;
@@ -102,8 +102,8 @@ void importFromFile(char* filename)
     if (file.is_open())
     {
         std::string temp;
-        std::string tempcity1;
-        std::string tempcity2;
+        std::string tempnode1;
+        std::string tempnode2;
         int tempdistance;
         int j = 0;
         int i = 0;
@@ -112,12 +112,12 @@ void importFromFile(char* filename)
             switch (i) {
             case 0:
             {
-                tempcity1 = temp;
+                tempnode1 = temp;
                 break;
             }
             case 1:
             {
-                tempcity2 = temp;
+                tempnode2 = temp;
                 break;
             }
             case 2:
@@ -128,30 +128,30 @@ void importFromFile(char* filename)
             }
             if (i == 2) {
                 if (j == 0) {
-                    auto city1 = new ListOfNodes(tempcity1);
-                    delete headCity;
-                    headCity = city1;
-                    auto con1 = new ListOfConnections(tempcity1, tempcity2, tempdistance);
+                    auto node1 = new ListOfNodes(tempnode1);
+                    delete headNode;
+                    headNode = node1;
+                    auto con1 = new ListOfConnections(tempnode1, tempnode2, tempdistance);
                     delete headConnection;
                     headConnection = con1;
-                    auto tempCity = headCity;
-                    while (tempCity->next) {
-                        tempCity = tempCity->next;
+                    auto tempNode = headNode;
+                    while (tempNode->next) {
+                        tempNode = tempNode->next;
                     }
-                    auto* city2 = new ListOfNodes(tempcity2, tempCity);
+                    auto* node2 = new ListOfNodes(tempnode2, tempNode);
                 }
                 else {
-                    auto tempCity = headCity;
-                    while (tempCity->next) {
-                        tempCity = tempCity->next;
+                    auto tempNode = headNode;
+                    while (tempNode->next) {
+                        tempNode = tempNode->next;
                     }
-                    auto city1 = new ListOfNodes(tempcity1, tempCity);
-                    auto city2 = new ListOfNodes(tempcity2, tempCity->next);
+                    auto node1 = new ListOfNodes(tempnode1, tempNode);
+                    auto node2 = new ListOfNodes(tempnode2, tempNode->next);
                     auto tempCon = headConnection;
                     while (tempCon->next) {
                         tempCon = tempCon->next;
                     }
-                    auto con1 = new ListOfConnections(tempcity1, tempcity2, tempdistance, tempCon);
+                    auto con1 = new ListOfConnections(tempnode1, tempnode2, tempdistance, tempCon);
                 }
                 i = 0;
                 j++;
@@ -161,29 +161,29 @@ void importFromFile(char* filename)
                 i++;
             }
         }
-        checkForDuplicateCities();
+        checkForDuplicateNodes();
         checkForDuplicateConnections();
     }
     file.close();
 }
 
-void readListOfCities(char* buffer)
+void readListOfNodes(char* buffer)
 {
-    //auto tempCity = headCity;
-    //while (tempCity)
+    //auto tempNode = headNode;
+    //while (tempNode)
     //{
-    //    std::cout << "city: " + tempCity->city << " Distance from source: " << tempCity->distance << " Previous city: " << tempCity->prevCity << std::endl;
-    //    tempCity = tempCity->next;
+    //    std::cout << "node: " + tempNode->node << " Distance from source: " << tempNode->distance << " Previous node: " << tempNode->prevNode << std::endl;
+    //    tempNode = tempNode->next;
     //}
-    auto tempCity = headCity;
+    auto tempNode = headNode;
     int offset = 0;
-    while (tempCity)
+    while (tempNode)
     {
         char tmp[32];
-        sprintf(buffer + offset, "Node: %s, Distance from source: %i, Previous node: %s\n", tempCity->city.c_str(), tempCity->distance, tempCity->prevCity.c_str());
-        _itoa(tempCity->distance, tmp, 10);
-        offset += strlen(tempCity->city.c_str()) + strlen(tmp) + strlen(tempCity->prevCity.c_str()) + 48;
-        tempCity = tempCity->next;
+        sprintf(buffer + offset, "Node: %s, Distance from source: %i, Previous node: %s\n", tempNode->node.c_str(), tempNode->distance, tempNode->prevNode.c_str());
+        _itoa(tempNode->distance, tmp, 10);
+        offset += strlen(tempNode->node.c_str()) + strlen(tmp) + strlen(tempNode->prevNode.c_str()) + 48;
+        tempNode = tempNode->next;
     }
 }
 
@@ -192,7 +192,7 @@ void readListofConnections()
     auto tempConnection = headConnection;
     while (tempConnection)
     {
-        std::cout << "city1: " + tempConnection->city1 << "city1: " + tempConnection->city1 << " Distance  " << tempConnection->distance << std::endl;
+        std::cout << "node1: " + tempConnection->node1 << "node1: " + tempConnection->node1 << " Distance  " << tempConnection->distance << std::endl;
         tempConnection = tempConnection->next;
     }
 }
@@ -204,14 +204,14 @@ void prepareParallelization(int threadCount)
         std::cout << "Minimal number of threads is 1";
         exit(1);
     }
-    auto tempCity = headCity;
+    auto tempNode = headNode;
     int i = 0;
-    while (tempCity)
+    while (tempNode)
     {
         i++;
-        tempCity = tempCity->next;
+        tempNode = tempNode->next;
     }
-    tempCity = headCity;
+    tempNode = headNode;
     if (threadCount > i)
     {
         std::cout << "Too many threads requested. Number of threads cannot exceed number of vertices." << std::endl;
@@ -220,85 +220,85 @@ void prepareParallelization(int threadCount)
     int vertPerThread = i / threadCount;
     int q = 0;
     bool created = false;
-    auto tempCityHead = headCity;
-    auto tempCityTail = headCity;
-    while (tempCity)
+    auto tempNodeHead = headNode;
+    auto tempNodeTail = headNode;
+    while (tempNode)
     {
         if (q == vertPerThread - 1)
         {
-            tempCityTail = tempCity;
+            tempNodeTail = tempNode;
             if (!created)
             {
                 created = true;
-                tHead = new ThreadHead(tempCityHead, tempCityTail);
-                if (tempCity->next)
+                tHead = new ThreadHead(tempNodeHead, tempNodeTail);
+                if (tempNode->next)
                 {
-                    tempCityHead = tempCity->next;
+                    tempNodeHead = tempNode->next;
                 }
             }
             else
             {
-                auto tempThreader = new ThreadHead(tHead, tempCityHead, tempCityTail);
+                auto tempThreader = new ThreadHead(tHead, tempNodeHead, tempNodeTail);
                 tHead = tempThreader;
-                if (tempCity->next)
+                if (tempNode->next)
                 {
-                    tempCityHead = tempCity->next;
+                    tempNodeHead = tempNode->next;
                 }
             }
             q = -1;
         }
         q++;
-        tempCity = tempCity->next;
+        tempNode = tempNode->next;
     }
     if (vertPerThread * threadCount != i)
     {
-        tempCityTail = tempCity;
-        auto tempThreader = new ThreadHead(tHead, tempCityHead, tempCityTail);
+        tempNodeTail = tempNode;
+        auto tempThreader = new ThreadHead(tHead, tempNodeHead, tempNodeTail);
         tHead = tempThreader;
     }
 }
 
 void oneThreadVer2(ThreadHead* th, int& tempDist, bool& finished)
 {
-    auto tempCity = th->subHead;
+    auto tempNode = th->subHead;
     bool broken = false;
-    while (tempCity) {
-        if (th->subEnd && tempCity == th->subEnd->next)
+    while (tempNode) {
+        if (th->subEnd && tempNode == th->subEnd->next)
         {
             break;
         }
-        if (!tempCity->visited && tempCity->distance < tempDist) {
+        if (!tempNode->visited && tempNode->distance < tempDist) {
             m.lock();
-            current = tempCity;
-            tempDist = tempCity->distance;
+            current = tempNode;
+            tempDist = tempNode->distance;
             finished = false;
             m.unlock();
         }
-        tempCity = tempCity->next;
+        tempNode = tempNode->next;
     }
 }
 
 void parallelVersionVer2(char* start, int nth)
 {
-    auto startCity = headCity;
+    auto startNode = headNode;
     bool finished = false;
-    while (startCity)
+    while (startNode)
     {
-        if (startCity->city == start)
+        if (startNode->node == start)
         {
-            startCity->distance = 0;
-            startCity->visited = true;
-            startCity->prevCity = "STARTING NODE";
+            startNode->distance = 0;
+            startNode->visited = true;
+            startNode->prevNode = "STARTING NODE";
             break;
         }
-        startCity = startCity->next;
-        if (!startCity)
+        startNode = startNode->next;
+        if (!startNode)
         {
-            std::cout << "Incorrect city provided as a start point" << std::endl;
+            std::cout << "Incorrect node provided as a start point" << std::endl;
             exit(1);
         }
     }
-    current = startCity;
+    current = startNode;
     int noOfThreads = nth;
 
     prepareParallelization(noOfThreads);
@@ -307,35 +307,35 @@ void parallelVersionVer2(char* start, int nth)
         finished = true;
         auto connectionIterator = headConnection;
         while (connectionIterator) {
-            if (connectionIterator->city1 == current->city) {
-                auto analyzedCity = headCity;
+            if (connectionIterator->node1 == current->node) {
+                auto analyzedNode = headNode;
                 int road = current->distance + connectionIterator->distance;
-                while (analyzedCity) {
-                    if (analyzedCity->city == connectionIterator->city2) {
+                while (analyzedNode) {
+                    if (analyzedNode->node == connectionIterator->node2) {
                         break;
                     }
-                    analyzedCity = analyzedCity->next;
+                    analyzedNode = analyzedNode->next;
                 }
-                if (!analyzedCity->visited && analyzedCity->distance > road) {
-                    analyzedCity->prevCity = current->city;
-                    //changeDistance(analyzedCity, road);
-                    analyzedCity->distance = road;
+                if (!analyzedNode->visited && analyzedNode->distance > road) {
+                    analyzedNode->prevNode = current->node;
+                    //changeDistance(analyzedNode, road);
+                    analyzedNode->distance = road;
                 }
             }
-            else if (connectionIterator->city2 == current->city)
+            else if (connectionIterator->node2 == current->node)
             {
-                auto analyzedCity = headCity;
+                auto analyzedNode = headNode;
                 int road = current->distance + connectionIterator->distance;
-                while (analyzedCity) {
-                    if (analyzedCity->city == connectionIterator->city1) {
+                while (analyzedNode) {
+                    if (analyzedNode->node == connectionIterator->node1) {
                         break;
                     }
-                    analyzedCity = analyzedCity->next;
+                    analyzedNode = analyzedNode->next;
                 }
-                if (!analyzedCity->visited && analyzedCity->distance > road) {
-                    analyzedCity->prevCity = current->city;
-                    //changeDistance(analyzedCity, road);
-                    analyzedCity->distance = road;
+                if (!analyzedNode->visited && analyzedNode->distance > road) {
+                    analyzedNode->prevNode = current->node;
+                    //changeDistance(analyzedNode, road);
+                    analyzedNode->distance = road;
                 }
             }
             connectionIterator = connectionIterator->next;
@@ -362,48 +362,48 @@ void parallelVersionVer2(char* start, int nth)
 
 void alphabet()
 {
-    auto tempCity = headCity;
-    auto tempCity2 = tempCity;
+    auto tempNode = headNode;
+    auto tempNode2 = tempNode;
     int i = 0;
-    while (tempCity2)
+    while (tempNode2)
     {
         i++;
-        tempCity2 = tempCity2->next;
+        tempNode2 = tempNode2->next;
     }
     for (int j = 0; j < i; j++) {
-        while (tempCity && tempCity->next) {
-            if (tempCity->city > tempCity->next->city) {
-                auto tempCityNext = tempCity->next;
-                auto tempCityNextNext = tempCityNext->next;
-                auto tempCityPrev = tempCity->prev;
-                if (tempCityNextNext) {
-                    tempCityNextNext->prev = tempCity;
+        while (tempNode && tempNode->next) {
+            if (tempNode->node > tempNode->next->node) {
+                auto tempNodeNext = tempNode->next;
+                auto tempNodeNextNext = tempNodeNext->next;
+                auto tempNodePrev = tempNode->prev;
+                if (tempNodeNextNext) {
+                    tempNodeNextNext->prev = tempNode;
                 }
-                tempCityNext->next = tempCity;
-                tempCity->prev = tempCityNext;
-                tempCity->next = tempCityNextNext;
-                tempCityNext->prev = tempCityPrev;
-                if (tempCityPrev) {
-                    tempCityPrev->next = tempCityNext;
+                tempNodeNext->next = tempNode;
+                tempNode->prev = tempNodeNext;
+                tempNode->next = tempNodeNextNext;
+                tempNodeNext->prev = tempNodePrev;
+                if (tempNodePrev) {
+                    tempNodePrev->next = tempNodeNext;
                 }
             }
-            tempCity = tempCity->next;
+            tempNode = tempNode->next;
         }
-        while (headCity->prev)
+        while (headNode->prev)
         {
-            headCity = headCity->prev;
+            headNode = headNode->prev;
         }
-        tempCity = headCity;
+        tempNode = headNode;
     }
 }
 
 bool nodeCheck(char* name)
 {
-    auto tempNode = headCity;
+    auto tempNode = headNode;
     bool exists = false;
     while (tempNode)
     {
-        if (tempNode->city == name)
+        if (tempNode->node == name)
         {
             exists = true;
             break;
@@ -419,14 +419,14 @@ bool checkNoOfThreads(int threadCount)
     {
         return false;
     }
-    auto tempCity = headCity;
+    auto tempNode = headNode;
     int i = 0;
-    while (tempCity)
+    while (tempNode)
     {
         i++;
-        tempCity = tempCity->next;
+        tempNode = tempNode->next;
     }
-    tempCity = headCity;
+    tempNode = headNode;
     if (threadCount > i)
     {
         return false;
@@ -444,7 +444,7 @@ bool checkNoOfThreads(int threadCount)
 //    auto start = std::chrono::steady_clock::now();
 //    //linearVersion("Krakow");
 //    parallelVersionVer2("Krakow", 3);
-//    readListOfCities();
+//    readListOfNodes();
 //    auto end = std::chrono::steady_clock::now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
 //    auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
 //    std::cout << "\n" << time_span.count() << " s\n";

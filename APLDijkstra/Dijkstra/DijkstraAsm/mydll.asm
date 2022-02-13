@@ -1,19 +1,19 @@
 ; mydll.asm
 
-ListOfCities struct
+ListOfNodes struct
 	next dq ?
 	prev dq ?
-	city db 256
-	prevCity db 256
+	node db 256
+	prevNode db 256
 	distance dq ?
 	visited dd ?
-ListOfCities ends
+ListOfNodes ends
 
 ListOfConnections struct
 	next dq ?
 	prev dq ?
-	city1 db 256
-	city2 db 256
+	node1 db 256
+	node2 db 256
 	distance dq ?
 ListOfConnections ends
 
@@ -25,16 +25,16 @@ extern exit: PROC
 extern printf: PROC
 
 thisis db "STARTING NODE",0
-incorrect db "Incorrect city provided as a start point",0
+incorrect db "Incorrect node provided as a start point",0
 sformat db "%s",0
 
 .code
-; void inLoop(struct ListOfCities** headCity, struct ListOfCities* current, struct ListOfConnections* connectionIterator, char* nameCity)
+; void inLoop(struct ListOfNodes** headNode, struct ListOfNodes* current, struct ListOfConnections* connectionIterator, char* nameNode)
 inLoop PROC
-	mov         qword ptr [rsp+32],r9	; nameCity
+	mov         qword ptr [rsp+32],r9	; nameNode
 	mov         qword ptr [rsp+24],r8	; connectionIterator
 	mov         qword ptr [rsp+16],rdx	; current
-	mov         qword ptr [rsp+8],rcx	; headCity
+	mov         qword ptr [rsp+8],rcx	; headNode
 	push        rbp  
 	push        rdi  
 	sub         rsp,128h  
@@ -43,7 +43,7 @@ inLoop PROC
 	;call        00007FF71B0213D4  
 	mov         rax,qword ptr [rbp+0000000000000120h]  
 	mov         rax,qword ptr [rax]  
-	mov         qword ptr [rbp+8],rax ; analyzedCity = *headCity 
+	mov         qword ptr [rbp+8],rax ; analyzedNode = *headNode 
 	mov         rax,qword ptr [rbp+0000000000000128h]  
 	mov         eax,dword ptr [rax+0000000000000210h]  
 	mov         rcx,qword ptr [rbp+0000000000000130h]  
@@ -53,7 +53,7 @@ inLoop59:
 	cmp         qword ptr [rbp+8],0  
 	je          inLoop8A  
 	mov         rax,qword ptr [rbp+8]  
-	add         rax,ListOfCities.city
+	add         rax,ListOfNodes.node
 	mov         rdx,qword ptr [rbp+0000000000000138h]  
 	mov         rcx,rax  
 	call        strcmp  
@@ -75,7 +75,7 @@ inLoop8A:
 	cmp         dword ptr [rax+0000000000000210h],ecx  
 	jle         inLoop0D3  
 	mov         rax,qword ptr [rbp+0000000000000128h]  
-	add         rax,ListOfCities.city
+	add         rax,ListOfNodes.node
 	mov         rcx,qword ptr [rbp+8]  
 	add         rcx,110h  
 	mov         rdx,rax  
@@ -90,29 +90,29 @@ inLoop0D3:
 	ret  
 inLoop ENDP
 
-; void linearVersion(struct ListOfCities** headCity, struct ListOfConnections** headConnection, char* start)
+; void linearVersion(struct ListOfNodes** headNode, struct ListOfConnections** headConnection, char* start)
 linearVersion PROC
 	mov         qword ptr [rsp+24],r8  ; start
 	mov         qword ptr [rsp+16],rdx ; headConnection
-	mov         qword ptr [rsp+8],rcx  ; headCity
+	mov         qword ptr [rsp+8],rcx  ; headNode
 	push        rbp  
 	push        rdi 
 	sub         rsp,1A8h  
 	lea         rbp,[rsp+32]  
 	mov         rax,qword ptr [rbp+00000000000001A0h]
 	mov         rax,qword ptr [rax]
-	mov         qword ptr [rbp+8],rax ; startCity = *headCity
+	mov         qword ptr [rbp+8],rax ; startNode = *headNode
 	mov         byte ptr [rbp+36],0  ; finished = false
 linearVersion3B:
-	cmp         qword ptr [rbp+8],0 ; while (startCity)
+	cmp         qword ptr [rbp+8],0 ; while (startNode)
 	je          EndWhile
 	mov         rax,qword ptr [rbp+8]  
 	add         rax,16  
 	mov         rdx,qword ptr [rbp+00000000000001B0h]  
 	mov			rcx,rax
-	;mov         rcx,ListOfCities.city[rax]
+	;mov         rcx,ListOfNodes.node[rax]
 	call        strcmp  
-	test        eax,eax  ; if (strcmp(startCity->city, start) == 0)
+	test        eax,eax  ; if (strcmp(startNode->node, start) == 0)
 	jne         linearVersion95  
 	mov         rax,qword ptr [rbp+8]  
 	mov         dword ptr [rax+0000000000000210h],0  

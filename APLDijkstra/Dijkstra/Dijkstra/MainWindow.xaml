@@ -30,7 +30,7 @@
             Height="50"
             HorizontalAlignment="Right"
             Margin="0,10,50,0"
-            Name="StartCityBox"
+            Name="StartNodeBox"
             Text="Starting node"
             TextWrapping="Wrap"
             VerticalAlignment="Top"
