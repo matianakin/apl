@@ -6,12 +6,6 @@
 
 extern "C" __declspec(dllexport) void importFromFile(char* filename);
 
-extern "C" __declspec(dllexport) void alphabet();
-
-extern "C" __declspec(dllexport) void parallelVersionVer2(char* start, int nth);
-
-extern "C" __declspec(dllexport) void readListOfNodes(char* buffer);
-
 extern "C" __declspec(dllexport) bool nodeCheck(char* name);
 
 extern "C" __declspec(dllexport) bool checkNoOfThreads(int threadCount);

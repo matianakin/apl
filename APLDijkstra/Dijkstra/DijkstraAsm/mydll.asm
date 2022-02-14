@@ -1,226 +1,330 @@
 ; mydll.asm
 
-ListOfNodes struct
-	next dq ?
-	prev dq ?
-	node db 256
-	prevNode db 256
-	distance dq ?
-	visited dd ?
-ListOfNodes ends
+ListOfNodes STRUCT
+	next QWORD ?
+	prev QWORD ?
+	node BYTE 256
+	prevNode BYTE 256
+	distance QWORD ?
+	visited	DWORD ?
+ListOfNodes ENDS
 
-ListOfConnections struct
-	next dq ?
-	prev dq ?
-	node1 db 256
-	node2 db 256
-	distance dq ?
-ListOfConnections ends
+ListOfConnections STRUCT
+	next QWORD ?
+	prev QWORD ?
+	node1 BYTE 256
+	node2 BYTE 256
+	distance QWORD ?
+ListOfConnections ENDS
 
 .data
-extern strcmp: PROC
-extern strcpy: PROC
-extern exit: PROC
+szMarker db "STARTING NODE",0
+szErrorMsg db "Incorrect node provided as a start point",0
+szFormat db "%s",0
 
-extern printf: PROC
-
-thisis db "STARTING NODE",0
-incorrect db "Incorrect node provided as a start point",0
-sformat db "%s",0
+EXTERN exit: PROC
+EXTERN printf: PROC
+EXTERN strcmp: PROC
+EXTERN strcpy: PROC
 
 .code
 ; void inLoop(struct ListOfNodes** headNode, struct ListOfNodes* current, struct ListOfConnections* connectionIterator, char* nameNode)
 inLoop PROC
-	mov         qword ptr [rsp+32],r9	; nameNode
-	mov         qword ptr [rsp+24],r8	; connectionIterator
-	mov         qword ptr [rsp+16],rdx	; current
-	mov         qword ptr [rsp+8],rcx	; headNode
-	push        rbp  
-	push        rdi  
-	sub         rsp,128h  
-	lea         rbp,[rsp+20h]  
-	;lea         rcx,[00007FF71B035017h]  
-	;call        00007FF71B0213D4  
-	mov         rax,qword ptr [rbp+0000000000000120h]  
+	LOCAL analyzedNode: QWORD
+	LOCAL road: QWORD
+
+	;     stack layout
+	; ======================
+	; [ road			   ] v-- local variables --v
+	; [ analyzedNode	   ]
+	; [					   ] <-- curr stack frame
+	; [ ret addr		   ] <-- inLoop ret addr
+	; [ headNode		   ] v-- func arguments --v
+	; [ current			   ] 
+	; [ connectionIterator ]
+	; [ nameNode		   ]
+	; [					   ] <-- old stack frame	
+
+	; prologue
+	mov         qword ptr [rbp+16],rcx	; headNode
+	mov         qword ptr [rbp+24],rdx	; current
+	mov         qword ptr [rbp+32],r8	; connectionIterator
+	mov         qword ptr [rbp+40],r9	; nameNode
+
+	; analyzedNode = *headNode
+	mov         rax,qword ptr [rbp+16]
 	mov         rax,qword ptr [rax]  
-	mov         qword ptr [rbp+8],rax ; analyzedNode = *headNode 
-	mov         rax,qword ptr [rbp+0000000000000128h]  
-	mov         eax,dword ptr [rax+0000000000000210h]  
-	mov         rcx,qword ptr [rbp+0000000000000130h]  
-	add         eax,dword ptr [rcx+0000000000000210h]  
-	mov         dword ptr [rbp+24h],eax  
-inLoop59:
-	cmp         qword ptr [rbp+8],0  
-	je          inLoop8A  
-	mov         rax,qword ptr [rbp+8]  
+	mov         qword ptr analyzedNode,rax
+
+	; road = current->distance + connectionIterator->distance
+	mov         rax,qword ptr [rbp+24]
+	mov         eax,dword ptr [rax+528]  
+	mov         rcx,qword ptr [rbp+32]  
+	add         eax,dword ptr [rcx+528]  
+	mov         dword ptr road,eax  
+
+	; while (analyzedNode)
+WhileCondition:
+	cmp         qword ptr analyzedNode,0  
+	je          WhileLeave  
+
+	; if (strcmp(analyzedNode->node, nameNode) == 0)
+	mov         rax,qword ptr analyzedNode
 	add         rax,ListOfNodes.node
-	mov         rdx,qword ptr [rbp+0000000000000138h]  
+	mov         rdx,qword ptr [rbp+40]  
 	mov         rcx,rax  
 	call        strcmp  
 	test        eax,eax  
-	jne         inLoop7D  
-	jmp         inLoop8A  
-inLoop7D:
-	mov         rax,qword ptr [rbp+8]  
+	je          WhileLeave
+
+	; analyzedNode = analyzedNode->next
+	mov         rax,qword ptr analyzedNode
 	mov         rax,qword ptr [rax]  
-	mov         qword ptr [rbp+8],rax  
-	jmp         inLoop59 
-inLoop8A:
-	mov         rax,qword ptr [rbp+8]  
-	movzx       eax,byte ptr [rax+0000000000000214h]  
+	mov         qword ptr analyzedNode,rax  
+	jmp         WhileCondition 
+
+WhileLeave:
+	; if (!analyzedNode->visited && analyzedNode->distance > road)
+	mov         rax,qword ptr analyzedNode
+	movzx       eax,byte ptr [rax+532]
 	test        eax,eax  
-	jne         inLoop0D3  
-	mov         rax,qword ptr [rbp+8]  
-	mov         ecx,dword ptr [rbp+24h]  
-	cmp         dword ptr [rax+0000000000000210h],ecx  
-	jle         inLoop0D3  
-	mov         rax,qword ptr [rbp+0000000000000128h]  
+	jne         FuncEnd  
+	mov         rax,qword ptr analyzedNode 
+	mov         ecx,dword ptr road  
+	cmp         dword ptr [rax+528],ecx  
+	jle         FuncEnd  
+
+	; strcpy(analyzedNode->prevNode, current->node)
+	mov         rax,qword ptr [rbp+24]  
 	add         rax,ListOfNodes.node
-	mov         rcx,qword ptr [rbp+8]  
-	add         rcx,110h  
+	mov         rcx,qword ptr analyzedNode 
+	add         rcx,272
 	mov         rdx,rax  
-	call        strcpy  
-	mov         rax,qword ptr [rbp+8]  
-	mov         ecx,dword ptr [rbp+24h]  
-	mov         dword ptr [rax+0000000000000210h],ecx
-inLoop0D3:
-	lea         rsp,[rbp+0000000000000108h]  
-	pop         rdi  
-	pop         rbp  
+	call        strcpy
+
+	; analyzedNode->distance = road
+	mov         rax,qword ptr analyzedNode 
+	mov         ecx,dword ptr road
+	mov         dword ptr [rax+528],ecx
+
+FuncEnd:
 	ret  
 inLoop ENDP
 
 ; void linearVersion(struct ListOfNodes** headNode, struct ListOfConnections** headConnection, char* start)
 linearVersion PROC
-	mov         qword ptr [rsp+24],r8  ; start
-	mov         qword ptr [rsp+16],rdx ; headConnection
-	mov         qword ptr [rsp+8],rcx  ; headNode
-	push        rbp  
-	push        rdi 
-	sub         rsp,1A8h  
-	lea         rbp,[rsp+32]  
-	mov         rax,qword ptr [rbp+00000000000001A0h]
+	LOCAL startNode: QWORD
+	LOCAL finished: QWORD
+	LOCAL current: QWORD
+	LOCAL connectionIterator: QWORD
+	LOCAL tempNode: QWORD
+	LOCAL tempDist: QWORD
+
+	;     stack layout
+	; ======================
+	; [ current			   ] v-- local variables --v
+	; [ finished		   ]
+	; [ startNode		   ]
+	; [					   ] <-- curr stack frame
+	; [ ret addr		   ] <-- inLoop ret addr
+	; [ headNode		   ] v-- func arguments --v
+	; [ headConnection	   ] 
+	; [ start			   ]
+	; [					   ] <-- old stack frame	
+
+	; prologue
+	mov         qword ptr [rbp+32],r8  ; start
+	mov         qword ptr [rbp+24],rdx ; headConnection
+	mov         qword ptr [rbp+16],rcx ; headNode
+
+	; startNode = *headNode
+	mov         rax,qword ptr [rbp+16]
 	mov         rax,qword ptr [rax]
-	mov         qword ptr [rbp+8],rax ; startNode = *headNode
-	mov         byte ptr [rbp+36],0  ; finished = false
-linearVersion3B:
-	cmp         qword ptr [rbp+8],0 ; while (startNode)
-	je          EndWhile
-	mov         rax,qword ptr [rbp+8]  
+	mov         qword ptr startNode,rax
+
+	; finished = false
+	mov         byte ptr finished,0
+
+	; while (startNode)
+While1Condition:
+	cmp         qword ptr startNode,0
+	je          While1Leave
+
+	; if (strcmp(startNode->node, start) == 0)
+	mov         rax,qword ptr startNode
 	add         rax,16  
-	mov         rdx,qword ptr [rbp+00000000000001B0h]  
+	mov         rdx,qword ptr [rbp+32]  
 	mov			rcx,rax
-	;mov         rcx,ListOfNodes.node[rax]
 	call        strcmp  
-	test        eax,eax  ; if (strcmp(startNode->node, start) == 0)
-	jne         linearVersion95  
-	mov         rax,qword ptr [rbp+8]  
-	mov         dword ptr [rax+0000000000000210h],0  
-	mov         rax,qword ptr [rbp+8]  
-	mov         byte ptr [rax+0000000000000214h],1  
-	mov         rax,qword ptr [rbp+8]  
+	test        eax,eax
+	jne         While1AdvanceToNextNode
+
+	; startNode->distance = 0
+	mov         rax,qword ptr startNode
+	mov         dword ptr [rax+528],0
+
+	; startNode->visited = true
+	mov         rax,qword ptr startNode
+	mov         byte ptr [rax+532],1
+
+	; strcpy(startNode->prevNode, "<---  This is the starting vector")
+	mov         rax,qword ptr startNode
 	add         rax,110h  
-	lea         rdx,thisis
+	lea         rdx,szMarker
 	mov         rcx,rax  
-	call        strcpy  
-	jmp         EndWhile  ; break
-linearVersion95:
-	mov         rax,qword ptr [rbp+8]  
+	call        strcpy
+	
+	; break
+	jmp         While1Leave  ; break
+
+While1AdvanceToNextNode:
+	; startNode = startNode->next
+	mov         rax,qword ptr startNode  
 	mov         rax,qword ptr [rax]  
-	mov         qword ptr [rbp+8],rax  
-	cmp         qword ptr [rbp+8],0  
-	jne         linearVersion0C5
-	lea         rdx,incorrect
-	lea         rcx,sformat
-	call        printf  
+	mov         qword ptr startNode,rax
+
+	; if (!startNode)
+	cmp         qword ptr startNode,0  
+	jne         While1Continue
+
+	; printf("%s", "Incorrect node provided as a start point\n")
+	lea         rdx,szErrorMsg
+	lea         rcx,szFormat
+	call        printf
+
+	; exit(1)
 	mov         ecx,1  
-	call        exit  ;qword ptr [__imp_exit (07FF746D23308h)]  
-linearVersion0C5:
-	jmp         linearVersion3B
-EndWhile:
-	mov         rax,qword ptr [rbp+8]  
-	mov         qword ptr [rbp+48h],rax  
-linearVersion0D2:
-	mov         byte ptr [rbp+24h],1  
-	mov         rax,qword ptr [rbp+00000000000001A8h]  ; headConnection
+	call        exit
+
+While1Continue:
+	jmp         While1Condition
+
+While1Leave:
+	; current = startNode
+	mov         rax,qword ptr startNode  
+	mov         qword ptr current,rax  
+
+	; do {
+
+DoWhile1:
+	; finished = true
+	mov         byte ptr finished,1
+
+	; connectionIterator = *headConnection
+	mov         rax,qword ptr [rbp+24]
 	mov         rax,qword ptr [rax]  
-	mov         qword ptr [rbp+68h],rax  
-linearVersion0E4:
-	cmp         qword ptr [rbp+68h],0  
-	je          linearVersion17C  
-	mov         rax,qword ptr [rbp+48h]  
+	mov         qword ptr connectionIterator,rax
+	
+	; while (connectionIterator)
+
+While2Condition:
+	cmp         qword ptr connectionIterator,0  
+	je          DoWhile1Continue1
+
+	; if(strcmp(connectionIterator->node1, current->node) == 0)
+	mov         rax,qword ptr current
 	add         rax,10h  
-	mov         rcx,qword ptr [rbp+68h]  
+	mov         rcx,qword ptr connectionIterator 
 	add         rcx,10h  
 	mov         rdx,rax  
 	call        strcmp  
 	test        eax,eax  
-	jne         linearVersion12E  
-	mov         rax,qword ptr [rbp+68h]  
+	jne         While2ElseIf
+
+	; inLoop(headNode, current, connectionIterator, connectionIterator->node2)
+	mov         rax,qword ptr connectionIterator
 	add         rax,110h  
-	mov         r9,rax  
-	mov         r8,qword ptr [rbp+68h]  
-	mov         rdx,qword ptr [rbp+48h]  
-	mov         rcx,qword ptr [rbp+00000000000001A0h]  
-	call        inLoop  
-	jmp         linearVersion16C  
-linearVersion12E:
-	mov         rax,qword ptr [rbp+48h]  
+	mov         r9,rax
+	mov         r8,qword ptr connectionIterator  
+	mov         rdx,qword ptr current
+	mov         rcx,qword ptr [rbp+16]
+	sub			rsp,32
+	call        inLoop
+	
+	; end of this while
+	jmp         While2Continue  
+
+	; else if(strcmp(connectionIterator->node2, current->node) == 0)
+While2ElseIf:
+	mov         rax,qword ptr current  
 	add         rax,10h  
-	mov         rcx,qword ptr [rbp+68h]  
+	mov         rcx,qword ptr connectionIterator
 	add         rcx,110h  
 	mov         rdx,rax  
 	call        strcmp  
 	test        eax,eax  
-	jne         linearVersion16C  
-	mov         rax,qword ptr [rbp+68h]  
+	jne         While2Continue
+
+	; inLoop(headNode, current, connectionIterator, connectionIterator->node1)
+	mov         rax,qword ptr connectionIterator 
 	add         rax,10h  
 	mov         r9,rax  
-	mov         r8,qword ptr [rbp+68h]  
-	mov         rdx,qword ptr [rbp+48h]  
-	mov         rcx,qword ptr [rbp+00000000000001A0h]  
-	call        inLoop  
-linearVersion16C:
-	mov         rax,qword ptr [rbp+68h]  
+	mov         r8,qword ptr connectionIterator
+	mov         rdx,qword ptr current  
+	mov         rcx,qword ptr [rbp+16]
+	sub			rsp,32
+	call        inLoop
+
+While2Continue:
+	; connectionIterator = connectionIterator->next
+	mov         rax,qword ptr connectionIterator
+	mov         rax,qword ptr [rax]
+	mov         qword ptr connectionIterator,rax  
+	jmp         While2Condition
+
+DoWhile1Continue1:
+	; tempDist = INT_MAX
+	mov         dword ptr tempDist,7FFFFFFFh
+
+	; tempNode = *headNode
+	mov         rax,qword ptr [rbp+16]  
 	mov         rax,qword ptr [rax]  
-	mov         qword ptr [rbp+68h],rax  
-	jmp         linearVersion0E4  
-linearVersion17C:
-	mov         dword ptr [rbp+0000000000000084h],7FFFFFFFh  
-	mov         rax,qword ptr [rbp+00000000000001A0h]  
-	mov         rax,qword ptr [rax]  
-	mov         qword ptr [rbp+00000000000000A8h],rax  
-linearVersion197:
-	cmp         qword ptr [rbp+00000000000000A8h],0  
-	je          linearVersion1FD  
-	mov         rax,qword ptr [rbp+00000000000000A8h]  
-	movzx       eax,byte ptr [rax+0000000000000214h]  
+	mov         qword ptr tempNode,rax
+
+	; while (tempNode)
+While3Condition:
+	cmp         qword ptr tempNode,0  
+	je          DoWhile1Continue2  
+
+	; if (!tempNode->visited && tempNode->distance < tempDist)
+	mov         rax,qword ptr tempNode
+	movzx       eax,byte ptr [rax+532]
 	test        eax,eax  
-	jne         linearVersion1EA  
-	mov         rax,qword ptr [rbp+00000000000000A8h]  
-	mov         ecx,dword ptr [rbp+0000000000000084h]  
-	cmp         dword ptr [rax+0000000000000210h],ecx  
-	jge         linearVersion1EA  
-	mov         rax,qword ptr [rbp+00000000000000A8h]  
-	mov         qword ptr [rbp+48h],rax  
-	mov         rax,qword ptr [rbp+00000000000000A8h]  
-	mov         eax,dword ptr [rax+0000000000000210h]  
-	mov         dword ptr [rbp+0000000000000084h],eax  
-	mov         byte ptr [rbp+24h],0  
-linearVersion1EA:
-	mov         rax,qword ptr [rbp+00000000000000A8h]  
+	jne         While3AdvanceToTheNextNode  
+	mov         rax,qword ptr tempNode  
+	mov         ecx,dword ptr tempDist  
+	cmp         dword ptr [rax+528],ecx  
+	jge         While3AdvanceToTheNextNode  
+
+	; current = tempNode
+	mov         rax,qword ptr tempNode 
+	mov         qword ptr current,rax
+
+	; tempDist = tempNode->distance
+	mov         rax,qword ptr tempNode
+	mov         eax,dword ptr [rax+528]  
+	mov         dword ptr tempDist,eax
+	
+	; finished = false
+	mov         byte ptr finished,0
+
+While3AdvanceToTheNextNode:
+	; tempNode = tempNode->next
+	mov         rax,qword ptr tempNode 
 	mov         rax,qword ptr [rax]  
-	mov         qword ptr [rbp+00000000000000A8h],rax  
-	jmp         linearVersion197  
-linearVersion1FD:
-	mov         rax,qword ptr [rbp+48h]  
-	mov         byte ptr [rax+0000000000000214h],1  
-	movzx       eax,byte ptr [rbp+24h]  
+	mov         qword ptr tempNode,rax  
+	jmp         While3Condition
+
+DoWhile1Continue2:
+	; current->visited = true
+	mov         rax,qword ptr current
+	mov         byte ptr [rax+532],1
+	
+	; } while (!finished)
+	movzx       eax,byte ptr finished  
 	test        eax,eax  
-	je          linearVersion0D2  
-	lea         rsp,[rbp+0000000000000188h]  
-	pop         rdi  
-	pop         rbp  
+	je          DoWhile1
+
 	ret  
 linearVersion ENDP
 

@@ -31,15 +31,6 @@ namespace Dijkstra
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "importFromFile")]
         public static extern void CPPimportFromFile(StringBuilder filename);
 
-        [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "alphabet")]
-        public static extern void CPPalphabet();
-
-        [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "readListOfNodes")]
-        public static extern void CPPreadListOfNodes(StringBuilder buffer);
-
-        [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "parallelVersionVer2")]
-        public static extern void CPPparallelVersionVer2(StringBuilder start, int nth);
-
         [DllImport("../../../../x64/Debug/DijkstraCpp.dll", EntryPoint = "nodeCheck")]
         public static extern bool CPPnodeCheck(StringBuilder name);
 

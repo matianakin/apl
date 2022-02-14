@@ -450,17 +450,3 @@ void callCPP(char* filename, char* start, int nth, char* buffer, char* time)
     strcpy(time, s.c_str());
     readListOfNodes(buffer);
 }
-
-//int main() {
-//
-//    importFromFile("D:/GitHub/apl/cpp/test.txt");
-//    alphabet();
-//    auto start = std::chrono::steady_clock::now();
-//    //linearVersion("Krakow");
-//    parallelVersionVer2("Krakow", 3);
-//    readListOfNodes();
-//    auto end = std::chrono::steady_clock::now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
-//    auto time_span = static_cast<std::chrono::duration<double>>(end - start);   // measure time span between start & end
-//    std::cout << "\n" << time_span.count() << " s\n";
-//    return 0;
-//}
