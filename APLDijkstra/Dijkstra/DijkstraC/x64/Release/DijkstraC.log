@@ -1,0 +1,10 @@
+﻿  pch.cpp
+  dllmain.cpp
+  mydll.cpp
+D:\GitHub\apl\APLDijkstra\Dijkstra\DijkstraC\mydll.cpp(79,85): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+     Creating library D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Release\DijkstraC.lib and object D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Release\DijkstraC.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 119 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  DijkstraC.vcxproj -> D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Release\DijkstraC.dll

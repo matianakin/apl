@@ -1,0 +1,13 @@
+﻿  pch.cpp
+  dllmain.cpp
+  ListOfConnections.cpp
+  ListOfNodes.cpp
+  mydll.cpp
+D:\GitHub\apl\APLDijkstra\Dijkstra\DijkstraCPP\mydll.cpp(185,101): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+  ThreadHead.cpp
+     Creating library D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Release\DijkstraCPP.lib and object D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Release\DijkstraCPP.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 364 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  DijkstraCPP.vcxproj -> D:\GitHub\apl\APLDijkstra\Dijkstra\x64\Release\DijkstraCPP.dll
