@@ -26,10 +26,13 @@ struct ListOfConnections {
     int distance;
 };
 
+//including inLoop function from Assembly
 extern "C" void inLoop(struct ListOfNodes** headNode, struct ListOfNodes* current, struct ListOfConnections* connectionIterator, char* nameNode);
+
+//including linearVersion (the main algorith) function from Assembly
 extern "C" void linearVersion(struct ListOfNodes** headNode, struct ListOfConnections** headConnection, char* start);
 
-
+//function sorting the list of nodes in alphabetical order
 void alphabet(struct ListOfNodes** headNode)
 {
     struct ListOfNodes* tempNode = *headNode;
@@ -67,6 +70,7 @@ void alphabet(struct ListOfNodes** headNode)
     }
 }
 
+//function reading list of nodes to the buffer
 void readListOfNodes(struct ListOfNodes** headNode, char* buffer)
 {
     struct ListOfNodes* tempNode = *headNode;
@@ -81,6 +85,7 @@ void readListOfNodes(struct ListOfNodes** headNode, char* buffer)
     }
 }
 
+//function checking the list of nodes for duplicates
 void checkForDuplicateNodes(struct ListOfNodes** headNode)
 {
     struct ListOfNodes* temp = *headNode;
@@ -118,6 +123,7 @@ void checkForDuplicateNodes(struct ListOfNodes** headNode)
     }
 }
 
+//function checking the list of connections for duplicates
 void checkForDuplicateConnections(struct ListOfConnections** headConnection)
 {
     struct ListOfConnections* temp = *headConnection;
@@ -225,6 +231,7 @@ void checkForDuplicateConnections(struct ListOfConnections** headConnection)
 //    } while (!finished);
 //}
 
+//function importing from file and strting entire algorithm, including the Assembly section
 void importFromFile(char* filename, char* start, char* buffer, char*time)
 {
     struct ListOfNodes* headNode = NULL;
